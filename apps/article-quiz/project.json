@@ -1,0 +1,28 @@
+{
+  "name": "article-quiz",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/article-quiz/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "buildTarget": "article-quiz:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "article-quiz:build:development"
+        },
+        "production": {
+          "buildTarget": "article-quiz:build:production"
+        }
+      }
+    }
+  }
+}
