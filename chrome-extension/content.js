@@ -1,56 +1,44 @@
-const currentUrl = window.location.href;
-const backendUrl = 'http://localhost:3000/api/';
-const getQuizPath = 'quiz-generator';
+let currentUrl = window.location.href;
+let backendUrl = 'http://localhost:3000/api/';
+let getQuizPath = 'quiz-generator';
 
 createModalAndStyles();
 loadQuiz();
-alertOnScrollToBottom();
+openModal();
 
 let quizData;
 
 async function loadQuiz() {
   showSpinner(true);
-  const res = await fetch(backendUrl + getQuizPath, {
-    method: 'POST',
-    body: JSON.stringify({
-      type: 'url',
-      data: { url: currentUrl },
-    }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-  if (res.status === 201) {
-    const resBody = await res.json();
-    quizData = resBody.data;
-    console.log({ quizData });
-    showSpinner(false);
-    createQuiz();
-  } else {
-    console.error('Failed to load quiz.');
+  try {
+    const res = await fetch(backendUrl + getQuizPath, {
+      method: 'POST',
+      body: JSON.stringify({
+        type: 'url',
+        data: { url: currentUrl },
+      }),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (res.status === 201) {
+      const resBody = await res.json();
+      quizData = resBody.data;
+      showSpinner(false);
+      createQuiz();
+    } else {
+      console.error('Failed to load quiz.');
+      showSpinner(false);
+    }
+  } catch (error) {
+    console.error('Error fetching quiz:', error);
     showSpinner(false);
   }
-}
-
-function alertOnScrollToBottom() {
-  const scrolledTo = window.scrollY + window.innerHeight;
-  const isReachBottom = document.body.scrollHeight === scrolledTo;
-
-  window.addEventListener('scroll', () => {
-    if (isReachBottom) {
-      console.log({
-        scrollY: window.scrollY,
-        innerHeight: window.innerHeight,
-        scrollHeight: document.body.scrollHeight,
-      });
-      openModal();
-    }
-  });
 }
 
 function createModalAndStyles() {
   const modalHtml = `
     <div id="quizModal" class="modal">
       <div class="modal-content">
-        <span class="close-button" onclick="closeModal()">×</span>
+        <span class="close-button">×</span>
         <div id="quizContainer">
           <div id="spinner">Loading quiz...</div>
         </div>
@@ -59,6 +47,8 @@ function createModalAndStyles() {
   `;
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  document.querySelector('.close-button').addEventListener('click', closeModal);
 
   const style = document.createElement('style');
   style.textContent = `

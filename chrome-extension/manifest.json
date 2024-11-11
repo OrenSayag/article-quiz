@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Article Quiz",
+  "description": "Extension to quiz you about the article you're visiting.",
+  "permissions": ["scripting", "activeTab"],
+  "version": "1.0",
+  "action": {
+    "default_popup": "content.html",
+    "default_icon": "ext.png"
+  }
+}
