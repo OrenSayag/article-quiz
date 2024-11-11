@@ -35,7 +35,14 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/article-quiz-e2e/**/*"]
+      "exclude": ["apps/article-quiz-e2e/**/*", "apps/sdk-e2e/**/*"]
     }
-  ]
+  ],
+  "targetDefaults": {
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    }
+  }
 }

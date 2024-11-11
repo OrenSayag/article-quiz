@@ -11,6 +11,9 @@ import { ZodValidationPipe } from 'nestjs-zod';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  if (process.env['NODE_ENV'] !== 'production') {
+    app.enableCors();
+  }
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(new ZodValidationPipe());
