@@ -1,14 +1,25 @@
-let currentUrl = window.location.href;
-let backendUrl = 'http://localhost:3000/api/';
-let getQuizPath = 'quiz-generator';
-
+sessionStorage.removeItem('quizData');
 createModalAndStyles();
 loadQuiz();
 openModal();
 
-let quizData;
+function getQuizData() {
+  return JSON.parse(sessionStorage.getItem('quizData'));
+}
+
+function setQuizData(quizData) {
+  return sessionStorage.setItem('quizData', JSON.stringify(quizData));
+}
 
 async function loadQuiz() {
+  const currentUrl = window.location.href;
+  const backendUrl = 'http://localhost:3000/api/';
+  const getQuizPath = 'quiz-generator';
+  let quizData = getQuizData();
+  if (quizData) {
+    createQuiz(quizData);
+    return;
+  }
   showSpinner(true);
   try {
     const res = await fetch(backendUrl + getQuizPath, {
@@ -22,8 +33,9 @@ async function loadQuiz() {
     if (res.status === 201) {
       const resBody = await res.json();
       quizData = resBody.data;
+      setQuizData(quizData);
       showSpinner(false);
-      createQuiz();
+      createQuiz(quizData);
     } else {
       console.error('Failed to load quiz.');
       showSpinner(false);
@@ -125,7 +137,7 @@ function showSpinner(isVisible) {
     : 'none';
 }
 
-function createQuiz() {
+function createQuiz(quizData) {
   const quizContainer = document.getElementById('quizContainer');
   quizContainer.innerHTML = ''; // Clear previous content
 
@@ -162,6 +174,7 @@ function createQuiz() {
 }
 
 function submitQuiz() {
+  const quizData = getQuizData();
   quizData.questions.forEach((question, index) => {
     const selected = document.querySelector(
       `input[name="question${index}"]:checked`
