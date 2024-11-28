@@ -31,7 +31,7 @@ export const genPrompt = ({ type, data }: Input): Output => {
 
       You will provide 1-10 questions based on the article's length.
 
-      Each question, will have 4 answer choices.
+      Each question, will have 4 answer choices, and the position of the correct answer in the array, is random.
 
       The article URL is: ${data}.
 
