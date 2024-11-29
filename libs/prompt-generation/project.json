@@ -1,0 +1,19 @@
+{
+  "name": "prompt-generation",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/prompt-generation/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/prompt-generation",
+        "main": "libs/prompt-generation/src/index.ts",
+        "tsConfig": "libs/prompt-generation/tsconfig.lib.json",
+        "assets": ["libs/prompt-generation/*.md"]
+      }
+    }
+  },
+  "tags": []
+}

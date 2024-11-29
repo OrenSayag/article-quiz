@@ -3,3 +3,5 @@ export type ApiBaseResponse<T> = {
   message: string;
   data?: T;
 };
+
+export type QuizGenerator = 'chat-gpt' | 'transformers';
