@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import {
   GenQuizRequestBodyDto,
   GenQuizResponseBody,
-} from '../../types/quiz.types';
+} from '@article-quiz/shared-types';
 import { QuizGeneratorService } from './quiz-generator.service';
 
 @Controller('quiz-generator')

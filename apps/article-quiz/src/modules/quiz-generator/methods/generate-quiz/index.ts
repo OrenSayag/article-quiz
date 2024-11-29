@@ -2,7 +2,7 @@ import {
   GenQuizRequestBodyDto,
   Quiz,
   quizSchema,
-} from '../../../../types/quiz.types';
+} from '@article-quiz/shared-types';
 import { OpenaiService } from '../../../openai/openai.service';
 import { genPrompt } from './methods/gen-prompt';
 import { log } from '@article-quiz/logger';

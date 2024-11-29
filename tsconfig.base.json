@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@article-quiz/logger": ["libs/logger/src/index.ts"],
+      "@article-quiz/shared-types": ["libs/shared-types/src/index.ts"],
       "@orensayag/article-quiz-site-reader": ["libs/site-reader/src/index.ts"]
     }
   },
