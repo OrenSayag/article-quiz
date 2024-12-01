@@ -4,4 +4,6 @@ export type ApiBaseResponse<T> = {
   data?: T;
 };
 
-export type QuizGenerator = 'chat-gpt' | 'transformers';
+export enum QuizGenerator {
+  CHAT_GPT = 'chat-gpt',
+}

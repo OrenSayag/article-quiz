@@ -1,0 +1,39 @@
+{
+  "name": "quiz-generator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/quiz-generator/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "tags": [],
+  "targets": {
+    "bundlefy": {
+      "executor": "@altack/nx-bundlefy:run",
+      "configurations": {},
+      "dependsOn": ["build"],
+      "outputs": ["{options.outputFile}"]
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/quiz-generator",
+        "tsConfig": "libs/quiz-generator/tsconfig.lib.json",
+        "packageJson": "libs/quiz-generator/package.json",
+        "main": "libs/quiz-generator/src/index.ts",
+        "assets": ["libs/quiz-generator/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}
