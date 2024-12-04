@@ -3,25 +3,42 @@ import { addOpenQuizButton } from './add-open-quiz-button';
 import { fetchQuizData } from './fetch-quiz-data';
 import { enableOpenQuizButton } from './enable-open-quiz-button';
 import { cleanupSiteReaderElements } from './utils/cleanup-article-quiz-elements';
+import { markButtonError } from './mark-button-error';
+import { Quiz } from '@article-quiz/shared-types';
 
-type Input =
-  | {
-      darkMode?: boolean;
-    }
-  | undefined;
+export type ResDataExtractor = (resObj: Record<string, unknown>) => Quiz;
 
-export function siteReader(input: Input) {
-  const { darkMode } = input || {};
+type Input = {
+  darkMode?: boolean;
+  requestConfig: Parameters<typeof fetch>;
+  resDataExtractor?: ResDataExtractor;
+};
+
+export function siteReader({
+  requestConfig,
+  darkMode,
+  resDataExtractor,
+}: Input) {
   cleanupSiteReaderElements();
   const content = extractPageContent();
   const button = addOpenQuizButton();
-  fetchQuizData().then((quiz) => {
-    enableOpenQuizButton({
-      button,
-      quiz,
-      darkMode,
+  fetchQuizData({
+    requestConfig,
+    content,
+    resDataExtractor,
+  })
+    .then((quiz) => {
+      console.log({ quiz });
+      enableOpenQuizButton({
+        button,
+        quiz,
+        darkMode,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      markButtonError(button, err);
     });
-  });
   console.log({
     pageContent: content,
   });

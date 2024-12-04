@@ -14,4 +14,5 @@ export type Quiz = {
 
 export enum QuizGenerator {
   CHAT_GPT = 'chat-gpt',
+  REPLICATE = 'replicate',
 }

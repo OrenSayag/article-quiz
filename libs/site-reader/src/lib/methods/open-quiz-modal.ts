@@ -52,12 +52,14 @@ function getModalStyles(darkMode?: boolean): Record<string, string> {
     transform: 'translate(-50%, -50%)',
     width: '80%',
     maxWidth: '500px',
+    maxHeight: '80vh',
     backgroundColor: darkMode ? '#333' : 'white',
     color: darkMode ? '#fff' : '#000',
     padding: '20px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     borderRadius: '10px',
     zIndex: '1000',
+    overflowY: 'auto',
   };
 }
 

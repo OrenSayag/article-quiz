@@ -1,37 +1,34 @@
 import { Quiz } from '@article-quiz/shared-types';
+import { ResDataExtractor } from '@orensayag/article-quiz-site-reader';
 
-export function fetchQuizData(): Promise<Quiz> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const quizData: Quiz = {
-        questions: [
-          {
-            question: 'What is the capital of France?',
-            answers: [
-              { text: 'Paris', isCorrect: true },
-              { text: 'Berlin', isCorrect: false },
-              { text: 'Madrid', isCorrect: false },
-            ],
-          },
-          {
-            question: 'Which planet is known as the Red Planet?',
-            answers: [
-              { text: 'Earth', isCorrect: false },
-              { text: 'Mars', isCorrect: true },
-              { text: 'Jupiter', isCorrect: false },
-            ],
-          },
-          {
-            question: 'What is 2 + 2?',
-            answers: [
-              { text: '3', isCorrect: false },
-              { text: '4', isCorrect: true },
-              { text: '5', isCorrect: false },
-            ],
-          },
-        ],
-      };
-      resolve(quizData);
-    }, 2000);
+type Input = {
+  requestConfig: Parameters<typeof fetch>;
+  content: string;
+  resDataExtractor?: ResDataExtractor;
+};
+
+export async function fetchQuizData({
+  requestConfig,
+  content,
+  resDataExtractor,
+}: Input): Promise<Quiz> {
+  const res = await fetch(requestConfig[0], {
+    ...requestConfig[1],
+    body: JSON.stringify({ content }),
+    method: 'POST',
+    headers: {
+      ...requestConfig[1]?.headers,
+      'Content-Type': 'application/json',
+    },
   });
+
+  const resBody = await res.json();
+  if (res.status === 200) {
+    if (resDataExtractor) {
+      return resDataExtractor(resBody);
+    }
+    return resBody;
+  } else {
+    throw Error('Failed to fetch quiz');
+  }
 }

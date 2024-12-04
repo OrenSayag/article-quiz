@@ -5,5 +5,36 @@ export function extractPageContent(): string {
     throw new Error('The document body is not available.');
   }
 
-  return body.innerHTML;
+  const clonedBody = body.cloneNode(true) as HTMLElement;
+
+  const ignoredTags = [
+    'script',
+    'noscript',
+    'style',
+    'iframe',
+    'ins',
+    'embed',
+    'object',
+    'header',
+    'footer',
+    'nav',
+    'aside',
+    'form',
+    'button',
+    'input',
+    'textarea',
+    'select',
+    'video',
+    'audio',
+    'canvas',
+    'svg',
+    'img',
+  ];
+
+  ignoredTags.forEach((tag) => {
+    const elements = clonedBody.querySelectorAll(tag);
+    elements.forEach((el) => el.remove());
+  });
+
+  return clonedBody.innerHTML;
 }
