@@ -1,6 +1,5 @@
 import { Quiz, QuizGenerator } from './types/quiz.types';
-import { generateQuizOpenAiChatGPT } from './methods/generate-quiz-openai-chatgpt';
-import { generateQuizWithReplicate } from './methods/generate-quiz-replicate';
+import { generateQuizClaude } from './methods/generate-quiz-claude';
 
 export type InputContent =
   | {
@@ -13,7 +12,7 @@ export type InputContent =
     };
 
 type Input = {
-  generator: QuizGenerator.CHAT_GPT | QuizGenerator.REPLICATE;
+  generator: QuizGenerator.CLAUDE;
   apiKey: string;
 } & InputContent;
 
@@ -27,14 +26,8 @@ export async function quizGenerator(input: Input): Promise<Output> {
     throw new Error('quizGenerator: html content not implemented');
   }
   switch (generator) {
-    case QuizGenerator.CHAT_GPT:
-      quiz = await generateQuizOpenAiChatGPT({
-        apiKey,
-        url: input.url,
-      });
-      break;
-    case QuizGenerator.REPLICATE:
-      quiz = await generateQuizWithReplicate({
+    case QuizGenerator.CLAUDE:
+      quiz = await generateQuizClaude({
         apiKey,
         url: input.url,
       });

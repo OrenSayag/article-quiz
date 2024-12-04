@@ -1,12 +1,20 @@
-type Input = {
-  contentUrl: string;
-};
+type Input =
+  | {
+      type: 'url';
+      contentUrl: string;
+    }
+  | {
+      type: 'attached-file';
+    };
 
 type Output = string;
 
-export const genPrompt = ({ contentUrl }: Input): Output => {
+export const genPrompt = (input: Input): Output => {
+  const { type } = input;
   const base = `
-      I need you to generate a quiz based on the article markdown in the URL I will provide you.
+      I need you to generate a quiz based on the article markdown in the ${
+        type === 'url' ? 'URL' : 'file'
+      } I will provide you.
       Your answer must be a JSON object of structure (following are typescript types):
 
       \`\`\`typescript
@@ -33,9 +41,11 @@ export const genPrompt = ({ contentUrl }: Input): Output => {
 
       You must return the answer as a valid minified JSON.
 
-      The MD is:
-
-      <MD>https://r.jina.ai/${contentUrl}</MD>
+      ${
+        type === 'url'
+          ? `The MD is:\n\n      <MD>https://r.jina.ai/${input.contentUrl}</MD>`
+          : ''
+      }
       `;
   return base;
 };

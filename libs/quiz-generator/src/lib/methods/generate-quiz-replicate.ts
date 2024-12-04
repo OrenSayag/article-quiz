@@ -21,6 +21,7 @@ export const generateQuizWithReplicate = async ({
     auth: apiKey,
   });
   const prompt = genPrompt({
+    type: 'url',
     contentUrl: url,
   });
   const output = await replicate.run(modelId, {

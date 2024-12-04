@@ -18,6 +18,7 @@ export const generateQuizOpenAiChatGPT = async ({
     apiKey,
   });
   const prompt = genPrompt({
+    type: 'url',
     contentUrl: url,
   });
   const response = await openAi.chat.completions.create({
