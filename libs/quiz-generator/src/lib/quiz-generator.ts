@@ -19,17 +19,12 @@ type Input = {
 type Output = Quiz;
 
 export async function quizGenerator(input: Input): Promise<Output> {
-  const { generator, contentType, apiKey } = input;
+  const { generator } = input;
   let quiz: Quiz;
-  if (contentType === 'html') {
-    // TODO: upload HTML to temp storage and delete on end/failure
-    throw new Error('quizGenerator: html content not implemented');
-  }
   switch (generator) {
     case QuizGenerator.CLAUDE:
       quiz = await generateQuizClaude({
-        apiKey,
-        url: input.url,
+        ...input,
       });
       break;
     default:

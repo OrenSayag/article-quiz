@@ -2,19 +2,28 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Quiz } from '@article-quiz/shared-types';
 import { genPrompt } from './gen-prompt';
 import { urlToPdfBase64 } from './utils/url-to-pdf-base64';
+import { InputContent } from '@orensayag/article-quiz-quiz-generator';
+import { htmlToPdfBase64 } from './utils/html-to-pdf-base64';
 
 type Input = {
-  url: string;
   apiKey: string;
-};
+} & InputContent;
 
 type Output = Quiz;
 
-export const generateQuizClaude = async ({
-  apiKey,
-  url,
-}: Input): Promise<Output> => {
-  const base64 = await urlToPdfBase64({ url });
+export const generateQuizClaude = async (input: Input): Promise<Output> => {
+  const { apiKey, contentType } = input;
+  let base64;
+  switch (contentType) {
+    case 'url':
+      base64 = await urlToPdfBase64({ url: input.url });
+      break;
+    case 'html':
+      base64 = await htmlToPdfBase64({
+        html: input.content,
+      });
+      break;
+  }
 
   const client = new Anthropic({
     apiKey,
