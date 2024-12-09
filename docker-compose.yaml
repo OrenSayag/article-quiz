@@ -1,12 +1,16 @@
 services:
-  cache:
-    image: redis:6.2-alpine
+  unstructured:
+    image:  downloads.unstructured.io/unstructured-io/unstructured-api:latest
     restart: always
     ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning
-    volumes:
-      - cache:/data
+      - '8000:8000'
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '3306:3306'
 volumes:
   cache:
     driver: local
