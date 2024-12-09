@@ -9,11 +9,11 @@ type Input = {
 
 type Output = Quiz;
 
-export const generateQuizOpenAiChatGPT = async ({
+export const generateQuizGpt4o = async ({
   url,
   apiKey,
 }: Input): Promise<Output> => {
-  console.log('Generating quiz with chat gpt...');
+  console.log('Generating quiz with gpt 4o...');
   const openAi = new OpenAi({
     apiKey,
   });
@@ -29,7 +29,7 @@ export const generateQuizOpenAiChatGPT = async ({
       },
     ],
     model: 'gpt-4o',
-    // temperature: 1,
+    temperature: 0.1,
     // top_p: 1,
     // n: 1,
     // stream: false,

@@ -13,7 +13,7 @@ export type Quiz = {
 };
 
 export enum QuizGenerator {
-  // CHAT_GPT = 'chat-gpt',
-  // REPLICATE = 'replicate',
   CLAUDE = 'claude',
+  GPT_4_O = 'gpt-4o',
+  ARTICLE_QUIZ = 'article-quiz',
 }

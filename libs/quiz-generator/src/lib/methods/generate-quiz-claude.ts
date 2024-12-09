@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Quiz } from '@article-quiz/shared-types';
 import { genPrompt } from './gen-prompt';
 import { urlToPdfBase64 } from './utils/url-to-pdf-base64';
-import { InputContent } from '@orensayag/article-quiz-quiz-generator';
+import { InputContent } from '../..';
 import { htmlToPdfBase64 } from './utils/html-to-pdf-base64';
 
 type Input = {
