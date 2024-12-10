@@ -28,4 +28,6 @@ export const quizSchema = z.object({
   questions: z.array(quizQuestionSchema),
 });
 
-export type GenQuizResponseBody = ApiBaseResponse<Quiz>;
+export type GenQuizResponseBody = ApiBaseResponse<undefined>;
+
+export type GetQuizResponseBody = ApiBaseResponse<Quiz>;

@@ -20,6 +20,7 @@ export const genQuiz = async ({
     temperature: 0.1,
     maxRetries: 2,
     format: 'json',
+    keepAlive: -1,
   });
   const generator = new QuizGenerator(
     5_000,

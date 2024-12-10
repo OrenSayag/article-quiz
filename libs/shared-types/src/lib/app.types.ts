@@ -3,7 +3,7 @@ import { z } from 'zod';
 export type ApiBaseResponse<T> = {
   success: boolean;
   message: string;
-  data?: T;
+  data: T;
 };
 
 export const HTMLContentSchema = z.object({

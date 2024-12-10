@@ -46,8 +46,6 @@ export class QuizGenerator {
   }
 
   createLlmChain(): Runnable {
-    // const template = this.generateTemplate();
-    // const prompt = ChatPromptTemplate.fromTemplate(template);
     const prompt = ChatPromptTemplate.fromTemplate(genSysPrompt());
 
     const chain = prompt.pipe(this.llm);
@@ -116,21 +114,22 @@ export class QuizGenerator {
       this.numberOfQuestions / chunks.length
     );
     log.debug(`Length of chunks: ${chunks.length}`);
-    log.debug({ chunks });
     const llmChain = this.createLlmChain();
     const quiz: Quiz = { questions: [] };
     for (const chunk of chunks) {
       const now = new Date().getTime();
-      log.debug(`Digesting chunk...`);
-      const subQuiz = await llmChain.invoke({ context: chunk });
-      const timeTakenToInvoke = Date.now() - now + ' ms';
+      const { content: subQuizJson } = await llmChain.invoke({
+        context: chunk,
+      });
+      const timeTakenToInvoke = (Date.now() - now) / 1_000 + ' seconds';
       log.debug({
         timeTakenToInvoke,
       });
-      quiz.questions = [
-        ...quiz.questions,
-        ...JSON.parse(subQuiz.content).questions,
-      ];
+      const subQuiz = JSON.parse(subQuizJson);
+      quiz.questions = [...quiz.questions, ...subQuiz.questions];
+      log.debug(
+        `Finished digesting chunk ${chunks.indexOf(chunk) + 1}/${chunks.length}`
+      );
     }
     return quiz;
   }
