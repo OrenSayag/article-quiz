@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { createZodDto } from 'nestjs-zod';
 import { ApiBaseResponse } from './app.types';
 
 export type QuizAnswer = {
@@ -28,16 +27,5 @@ const quizQuestionSchema = z.object({
 export const quizSchema = z.object({
   questions: z.array(quizQuestionSchema),
 });
-
-export const genQuizRequestBodySchema = z.object({
-  type: z.literal('url'),
-  data: z.object({
-    url: z.string(),
-  }),
-});
-
-export class GenQuizRequestBodyDto extends createZodDto(
-  genQuizRequestBodySchema
-) {}
 
 export type GenQuizResponseBody = ApiBaseResponse<Quiz>;

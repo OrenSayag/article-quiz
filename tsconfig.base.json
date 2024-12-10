@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
+    "strictNullChecks": true,
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
@@ -15,6 +16,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@article-quiz/db": ["libs/db/src/index.ts"],
+      "@article-quiz/jina-ai": ["libs/jina-ai/src/index.ts"],
       "@article-quiz/logger": ["libs/logger/src/index.ts"],
       "@article-quiz/prompt-generation": [
         "libs/prompt-generation/src/index.ts"

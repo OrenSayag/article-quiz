@@ -1,18 +1,7 @@
 import { Quiz, QuizGenerator } from './types/quiz.types';
 import { generateQuizClaude } from './methods/generate-quiz-claude';
 import { generateQuizGpt4o } from './methods/generate-quiz-gpt-4o';
-
-type HTMLContent = {
-  contentType: 'html';
-  content: string;
-};
-
-type URLContent = {
-  contentType: 'url';
-  url: string;
-};
-
-export type InputContent = HTMLContent | URLContent;
+import { InputContent, URLContent } from '@article-quiz/shared-types';
 
 type ClaudeInput = {
   generator: QuizGenerator.CLAUDE;
