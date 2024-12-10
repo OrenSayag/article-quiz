@@ -5,8 +5,7 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import path from 'node:path';
 import { UnstructuredLoader } from '@langchain/community/document_loaders/fs/unstructured';
 import { Runnable } from '@langchain/core/runnables';
-import { QuizSchema } from '../../../../../schemas/quiz.schema';
-import { Quiz } from '@article-quiz/shared-types';
+import { Quiz, QuizSchema } from '@article-quiz/shared-types';
 import { genSysPrompt } from './gen-sys-prompt';
 import { log } from '@article-quiz/logger';
 

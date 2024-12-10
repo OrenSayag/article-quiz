@@ -1,0 +1,1 @@
+ALTER TABLE `jobs` MODIFY COLUMN `status` enum('started','failed','success','queued') NOT NULL;

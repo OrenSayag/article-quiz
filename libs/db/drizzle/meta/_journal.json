@@ -8,6 +8,13 @@
       "when": 1733814616818,
       "tag": "0000_light_senator_kelly",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1733850436874,
+      "tag": "0001_sudden_ted_forrester",
+      "breakpoints": true
     }
   ]
 }

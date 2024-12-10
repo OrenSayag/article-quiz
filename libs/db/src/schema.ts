@@ -6,7 +6,12 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/mysql-core';
-import { JobStatus, JobType, Quiz } from '@article-quiz/shared-types';
+import {
+  InputContent,
+  JobStatus,
+  JobType,
+  Quiz,
+} from '@article-quiz/shared-types';
 
 export const jobs = mysqlTable('jobs', {
   id: int('id').primaryKey().autoincrement(),
@@ -16,9 +21,10 @@ export const jobs = mysqlTable('jobs', {
     JobStatus.STARTED,
     JobStatus.FAILED,
     JobStatus.SUCCESS,
+    JobStatus.QUEUED,
   ]).notNull(),
   type: mysqlEnum([JobType.CREATE_QUIZ]).notNull(),
-  data: json('data').notNull(),
+  data: json('data').$type<InputContent>().notNull(),
 });
 
 export const quizzes = mysqlTable('quizzes', {

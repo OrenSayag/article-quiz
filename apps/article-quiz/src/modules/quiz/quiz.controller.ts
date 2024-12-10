@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import {
   GenQuizResponseBody,
@@ -7,7 +7,7 @@ import {
   InputContentSchema,
 } from '@article-quiz/shared-types';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { Response } from 'express';
+import { z } from 'zod';
 
 @Controller('quiz')
 export class QuizController {
@@ -15,16 +15,21 @@ export class QuizController {
 
   @Post('')
   async genQuiz(
-    @Body(new ZodValidationPipe(InputContentSchema)) data: InputContent,
-    @Res() res: Response
+    @Body(new ZodValidationPipe(z.array(InputContentSchema)))
+    data: InputContent[]
   ): Promise<GenQuizResponseBody> {
-    await this.quizService.createQuiz({
-      ...data,
-      res,
-    });
+    await Promise.all(
+      data.map((d) =>
+        this.quizService.createQuiz({
+          ...d,
+        })
+      )
+    );
     return {
       success: true,
-      message: 'Successfully generated quiz.',
+      message: `Successfully created create-quiz job${
+        data.length > 1 ? 's' : ''
+      }.`,
       data: undefined,
     };
   }

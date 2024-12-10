@@ -18,6 +18,7 @@
     "axios": "^1.6.0",
     "cache-manager": "^5.2.3",
     "cache-manager-redis-store": "^3.0.1",
+    "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.0",
     "express": "^4.21.2",
     "html-pdf-node": "^1.0.8",

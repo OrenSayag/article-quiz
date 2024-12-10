@@ -1,11 +1,11 @@
 import { db } from '../../../config';
 import { jobs } from '../../../schema';
 import { eq } from 'drizzle-orm';
-import { JobStatus } from '@article-quiz/shared-types';
+import { InputContent, JobStatus } from '@article-quiz/shared-types';
 
 type Input = {
   id: number;
-  data?: object;
+  data?: InputContent;
   status?: JobStatus;
 };
 
