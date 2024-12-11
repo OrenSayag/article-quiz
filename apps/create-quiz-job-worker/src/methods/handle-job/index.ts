@@ -1,7 +1,7 @@
 import { log } from '@article-quiz/logger';
 import { createQuiz as saveQuizToDb, updateJob } from '@article-quiz/db';
 import { InputContent, JobStatus } from '@article-quiz/shared-types';
-import { genQuiz } from '@article-quiz/quiz-generation-llm';
+import { genQuiz, LlmConfig } from '@article-quiz/quiz-generation-llm';
 import { getMdBuffer } from '@article-quiz/utils';
 
 type Input = {
@@ -10,6 +10,7 @@ type Input = {
   unstructuredApiUrl: string;
   unstructuredApiKey: string;
   modelUsed: string;
+  llmConfig: LlmConfig;
 };
 
 export const handleJob = async ({
@@ -18,6 +19,7 @@ export const handleJob = async ({
   unstructuredApiUrl,
   unstructuredApiKey,
   modelUsed,
+  llmConfig,
 }: Input) => {
   const quizSource = data.contentType === 'url' ? data.url : data.content;
   log.debug(`Handling job for source ${quizSource}`);
@@ -34,6 +36,7 @@ export const handleJob = async ({
       markdownBuffer: mdBuffer,
       unstructuredApiUrl,
       unstructuredApiKey,
+      llmConfig,
     });
     const endTime = Date.now();
     log.debug(`Saving quiz to db`);

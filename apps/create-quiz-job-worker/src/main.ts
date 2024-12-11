@@ -4,6 +4,7 @@ import { log } from '@article-quiz/logger';
 import { listJobs } from '@article-quiz/db';
 import { InputContent, JobStatus, JobType } from '@article-quiz/shared-types';
 import { handleJob } from './methods/handle-job';
+import { LlmHost } from '@article-quiz/quiz-generation-llm';
 
 const UNSTRUCTURED_API_URL = process.env['UNSTRUCTURED_API_URL'];
 const UNSTRUCTURED_API_KEY = process.env['UNSTRUCTURED_API_KEY'];
@@ -38,7 +39,13 @@ const main = async (jobStatuses: JobStatus[]) => {
         data: job.data as InputContent,
         unstructuredApiUrl: UNSTRUCTURED_API_URL,
         unstructuredApiKey: UNSTRUCTURED_API_KEY ?? '',
-        modelUsed: 'qwq32b ollama local',
+        modelUsed: 'gemma2 27b from replicate',
+        llmConfig: {
+          host: LlmHost.REPLICATE,
+          apiKey: process.env['REPLICATE_API_KEY']!,
+          model:
+            'google-deepmind/gemma2-27b-it:81e8d7f4dd5ec1b1bec7456d6d76426e1e63a2745bd34eb7a3d7987ba4ebd80e',
+        },
       });
     } catch (e) {
       errors.push(e.message);

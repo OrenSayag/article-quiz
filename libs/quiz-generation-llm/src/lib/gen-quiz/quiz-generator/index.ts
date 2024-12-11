@@ -8,18 +8,30 @@ import { Runnable } from '@langchain/core/runnables';
 import { Quiz, QuizSchema } from '@article-quiz/shared-types';
 import { genSysPrompt } from './gen-sys-prompt';
 import { log } from '@article-quiz/logger';
+import { LlmHost } from '@article-quiz/quiz-generation-llm';
+import { Replicate } from '@langchain/community/llms/replicate';
 
 export class QuizGenerator {
   numberOfOuestionsPerChunk: number;
   constructor(
     private readonly chunkSize: number,
     private readonly chunkOverlap: number,
-    private readonly llm: ChatOllama,
+    private readonly llm:
+      | {
+          type: LlmHost.OLLAMA_LOCAL;
+          model: ChatOllama;
+        }
+      | {
+          type: LlmHost.REPLICATE;
+          model: Replicate;
+        },
     private readonly numberOfQuestions: number,
     private readonly unstructuredApiUrl: string,
     private readonly unstructuredApiKey?: string
   ) {
-    llm.bindTools([QuizSchema]);
+    if (llm.type === LlmHost.OLLAMA_LOCAL) {
+      llm.model.bindTools([QuizSchema]);
+    }
   }
 
   textSplitter(data: string): Promise<string[]> {
@@ -47,7 +59,7 @@ export class QuizGenerator {
   createLlmChain(): Runnable {
     const prompt = ChatPromptTemplate.fromTemplate(genSysPrompt());
 
-    const chain = prompt.pipe(this.llm);
+    const chain = prompt.pipe(this.llm.model as ChatOllama);
 
     return chain;
   }
@@ -113,13 +125,31 @@ export class QuizGenerator {
       this.numberOfQuestions / chunks.length
     );
     log.debug(`Length of chunks: ${chunks.length}`);
-    const llmChain = this.createLlmChain();
+    let llmChain;
+    if (this.llm.type === LlmHost.OLLAMA_LOCAL) {
+      llmChain = this.createLlmChain();
+    }
     const quiz: Quiz = { questions: [] };
     for (const chunk of chunks) {
       const now = new Date().getTime();
-      const { content: subQuizJson } = await llmChain.invoke({
-        context: chunk,
-      });
+      let subQuizJson;
+      if (this.llm.type === LlmHost.OLLAMA_LOCAL) {
+        const { content } = await llmChain.invoke({
+          context: chunk,
+        });
+        subQuizJson = content;
+      } else {
+        const prompt = genSysPrompt().replace(`{context}`, chunk);
+        // fs.writeFileSync(
+        //   `/Users/oren.s/projects/personal/article-quiz/temp/prompt${
+        //     chunks.indexOf(chunk) + 1
+        //   }.json`,
+        //   prompt
+        // );
+        const res = await this.llm.model.invoke(prompt);
+        log.debug({ res });
+        subQuizJson = res;
+      }
       const timeTakenToInvoke = (Date.now() - now) / 1_000 + ' seconds';
       log.debug({
         timeTakenToInvoke,
