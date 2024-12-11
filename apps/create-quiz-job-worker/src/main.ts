@@ -39,12 +39,10 @@ const main = async (jobStatuses: JobStatus[]) => {
         data: job.data as InputContent,
         unstructuredApiUrl: UNSTRUCTURED_API_URL,
         unstructuredApiKey: UNSTRUCTURED_API_KEY ?? '',
-        modelUsed: 'gemma2 27b from replicate',
+        modelUsed: 'qwq local',
         llmConfig: {
-          host: LlmHost.REPLICATE,
-          apiKey: process.env['REPLICATE_API_KEY']!,
-          model:
-            'google-deepmind/gemma2-27b-it:81e8d7f4dd5ec1b1bec7456d6d76426e1e63a2745bd34eb7a3d7987ba4ebd80e',
+          host: LlmHost.OLLAMA_LOCAL,
+          model: 'qwq',
         },
       });
     } catch (e) {
