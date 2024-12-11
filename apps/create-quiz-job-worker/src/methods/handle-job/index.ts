@@ -1,8 +1,8 @@
 import { log } from '@article-quiz/logger';
 import { createQuiz as saveQuizToDb, updateJob } from '@article-quiz/db';
 import { InputContent, JobStatus } from '@article-quiz/shared-types';
-import { getMdBuffer } from '../get-md-buffer';
-import { genQuiz } from '../gen-quiz';
+import { genQuiz } from '@article-quiz/quiz-generation-llm';
+import { getMdBuffer } from '@article-quiz/utils';
 
 type Input = {
   id: number;

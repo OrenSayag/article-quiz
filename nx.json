@@ -38,7 +38,8 @@
       "exclude": [
         "apps/article-quiz-e2e/**/*",
         "apps/sdk-e2e/**/*",
-        "apps/create-quiz-job-worker-e2e/**/*"
+        "apps/create-quiz-job-worker-e2e/**/*",
+        "apps/llm-quiz-gen-e2e/**/*"
       ]
     }
   ],

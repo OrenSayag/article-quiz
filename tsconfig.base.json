@@ -22,7 +22,11 @@
       "@article-quiz/prompt-generation": [
         "libs/prompt-generation/src/index.ts"
       ],
+      "@article-quiz/quiz-generation-llm": [
+        "libs/quiz-generation-llm/src/index.ts"
+      ],
       "@article-quiz/shared-types": ["libs/shared-types/src/index.ts"],
+      "@article-quiz/utils": ["libs/utils/src/index.ts"],
       "@orensayag/article-quiz-quiz-generator": [
         "libs/quiz-generator/src/index.ts"
       ],

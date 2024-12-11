@@ -13169,7 +13169,7 @@ snapshots:
       axios: 1.7.4(debug@4.3.7)
       camelcase: 6.3.0
       debug: 4.3.7
-      dotenv: 16.4.5
+      dotenv: 16.4.7
       extend: 3.0.2
       file-type: 16.5.4
       form-data: 4.0.0
