@@ -5,6 +5,7 @@ import {
   mysqlTable,
   text,
   timestamp,
+  varchar,
 } from 'drizzle-orm/mysql-core';
 import {
   InputContent,
@@ -33,4 +34,6 @@ export const quizzes = mysqlTable('quizzes', {
   updatedAt: timestamp('updated_at').onUpdateNow(),
   source: text().notNull(),
   data: json('data').$type<Quiz>().notNull(),
+  timeToCreateInMs: int('time_to_create_in_ms').notNull(),
+  modelUsed: varchar('model_used', { length: 244 }),
 });

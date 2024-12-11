@@ -16,7 +16,7 @@ export const genQuiz = async ({
   unstructuredApiKey,
 }: Input): Promise<Output> => {
   const llm = new ChatOllama({
-    model: 'gemma2:27b',
+    model: 'qwq',
     temperature: 0.1,
     maxRetries: 2,
     format: 'json',

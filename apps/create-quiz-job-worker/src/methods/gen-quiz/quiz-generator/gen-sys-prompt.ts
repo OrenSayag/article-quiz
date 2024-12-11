@@ -2,7 +2,7 @@ type Output = string;
 
 export const genSysPrompt = (): Output => {
   return `<s>[INST]
-      You will create a quiz. Respond with JSON of structure:
+      You will create a quiz. Respond with JSON exactly of the Quiz object:
       type QuizAnswer = {{
         isCorrect: boolean;
         text: string;

@@ -38,6 +38,7 @@ const main = async (jobStatuses: JobStatus[]) => {
         data: job.data as InputContent,
         unstructuredApiUrl: UNSTRUCTURED_API_URL,
         unstructuredApiKey: UNSTRUCTURED_API_KEY ?? '',
+        modelUsed: 'qwq32b ollama local',
       });
     } catch (e) {
       errors.push(e.message);
@@ -49,7 +50,7 @@ const main = async (jobStatuses: JobStatus[]) => {
   }
 };
 
-main([JobStatus.QUEUED])
+main([JobStatus.QUEUED, JobStatus.FAILED, JobStatus.STARTED])
   .then(() => {
     log.debug('Finished');
     process.exit(0);

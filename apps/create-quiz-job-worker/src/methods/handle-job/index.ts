@@ -9,6 +9,7 @@ type Input = {
   data: InputContent;
   unstructuredApiUrl: string;
   unstructuredApiKey: string;
+  modelUsed: string;
 };
 
 export const handleJob = async ({
@@ -16,6 +17,7 @@ export const handleJob = async ({
   id,
   unstructuredApiUrl,
   unstructuredApiKey,
+  modelUsed,
 }: Input) => {
   const quizSource = data.contentType === 'url' ? data.url : data.content;
   log.debug(`Handling job for source ${quizSource}`);
@@ -27,15 +29,19 @@ export const handleJob = async ({
     log.debug(`Getting MD buffer`);
     const mdBuffer = await getMdBuffer(data);
     log.debug(`Generating quiz`);
+    const startTime = Date.now();
     const quiz = await genQuiz({
       markdownBuffer: mdBuffer,
       unstructuredApiUrl,
       unstructuredApiKey,
     });
+    const endTime = Date.now();
     log.debug(`Saving quiz to db`);
     await saveQuizToDb({
       source: quizSource,
       data: quiz,
+      timeToCreateInMs: endTime - startTime,
+      modelUsed,
     });
     log.debug(`Updating job status to success`);
     await updateJob({
