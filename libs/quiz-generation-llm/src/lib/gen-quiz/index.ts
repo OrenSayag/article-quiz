@@ -26,21 +26,31 @@ export type LlmConfig =
       apiKey: string;
     };
 
+export enum DocumentType {
+  MD = 'md',
+  PDF = 'pdf',
+}
+
+export type DocumentInput =
+  | {
+      documentType: DocumentType.MD;
+      unstructuredApiKey?: string;
+      unstructuredApiUrl: string;
+    }
+  | {
+      documentType: DocumentType.PDF;
+    };
+
 type Input = {
-  markdownBuffer: Buffer;
-  unstructuredApiKey?: string;
-  unstructuredApiUrl: string;
   llmConfig: LlmConfig;
+  buffer: Buffer;
+  documentInput: DocumentInput;
 };
 
 type Output = Quiz;
 
-export const genQuiz = async ({
-  markdownBuffer,
-  unstructuredApiUrl,
-  unstructuredApiKey,
-  llmConfig,
-}: Input): Promise<Output> => {
+export const genQuiz = async (input: Input): Promise<Output> => {
+  const { llmConfig, buffer, documentInput } = input;
   let quizGeneratorLlm: QuizGeneratorLlm | undefined = undefined;
   if (llmConfig.host === LlmHost.OLLAMA_LOCAL) {
     quizGeneratorLlm = {
@@ -80,18 +90,11 @@ export const genQuiz = async ({
   if (!quizGeneratorLlm) {
     throw new Error(`Logic error in genQuiz: quizGeneratorLlm is not defined.`);
   }
-  const generator = new QuizGenerator(
-    5_000,
-    50,
-    quizGeneratorLlm,
-    5,
-    unstructuredApiUrl,
-    unstructuredApiKey
-  );
+  // const generator = new QuizGenerator(5_000, 50, quizGeneratorLlm, 5);
+  const generator = new QuizGenerator(1_000, 200, quizGeneratorLlm, 5);
   const quiz = await generator.generateQa({
-    type: 'md',
-    fileName: 'gen-quiz.md',
-    content: markdownBuffer,
+    ...documentInput,
+    buffer,
   });
   return quiz;
 };

@@ -5,7 +5,7 @@ type Input = InputContent;
 
 type Output = Buffer;
 
-const mdGenOpts = {
+export const mdGenOpts = {
   removeAllImages: true,
   excludedSelectors: ['header', 'nav'],
 };

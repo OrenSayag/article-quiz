@@ -1,8 +1,14 @@
 import { log } from '@article-quiz/logger';
 import { createQuiz as saveQuizToDb, updateJob } from '@article-quiz/db';
 import { InputContent, JobStatus } from '@article-quiz/shared-types';
-import { genQuiz, LlmConfig } from '@article-quiz/quiz-generation-llm';
-import { getMdBuffer } from '@article-quiz/utils';
+import {
+  DocumentType,
+  genQuiz,
+  LlmConfig,
+} from '@article-quiz/quiz-generation-llm';
+import { mdGenOpts } from '@article-quiz/utils';
+import { mdToPdf } from 'md-to-pdf';
+import { htmlToMd, urlToMd } from '@article-quiz/jina-ai';
 
 type Input = {
   id: number;
@@ -13,14 +19,7 @@ type Input = {
   llmConfig: LlmConfig;
 };
 
-export const handleJob = async ({
-  data,
-  id,
-  unstructuredApiUrl,
-  unstructuredApiKey,
-  modelUsed,
-  llmConfig,
-}: Input) => {
+export const handleJob = async ({ data, id, modelUsed, llmConfig }: Input) => {
   const quizSource = data.contentType === 'url' ? data.url : data.content;
   log.debug(`Handling job for source ${quizSource}`);
   try {
@@ -28,15 +27,27 @@ export const handleJob = async ({
       id,
       status: JobStatus.STARTED,
     });
-    log.debug(`Getting MD buffer`);
-    const mdBuffer = await getMdBuffer(data);
+    log.debug(`Getting MD pdf from buffer`);
+    const pdf = await mdToPdf({
+      content:
+        data.contentType === 'url'
+          ? await urlToMd({
+              url: data.url,
+              ...mdGenOpts,
+            })
+          : await htmlToMd({
+              html: data.content,
+              ...mdGenOpts,
+            }),
+    });
     log.debug(`Generating quiz`);
     const startTime = Date.now();
     const quiz = await genQuiz({
-      markdownBuffer: mdBuffer,
-      unstructuredApiUrl,
-      unstructuredApiKey,
       llmConfig,
+      documentInput: {
+        documentType: DocumentType.PDF,
+      },
+      buffer: pdf.content,
     });
     const endTime = Date.now();
     log.debug(`Saving quiz to db`);

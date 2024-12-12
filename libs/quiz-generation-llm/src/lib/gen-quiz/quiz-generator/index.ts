@@ -1,16 +1,18 @@
-import { ChatOllama } from '@langchain/ollama';
+import { ChatOllama, OllamaEmbeddings } from '@langchain/ollama';
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf';
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import path from 'node:path';
 import { UnstructuredLoader } from '@langchain/community/document_loaders/fs/unstructured';
 import { Runnable } from '@langchain/core/runnables';
 import { Quiz, QuizSchema } from '@article-quiz/shared-types';
 import { genSysPrompt } from './gen-sys-prompt';
 import { log } from '@article-quiz/logger';
-import { LlmHost } from '@article-quiz/quiz-generation-llm';
+import { DocumentInput, DocumentType, LlmHost } from '..';
 import { Replicate } from '@langchain/community/llms/replicate';
 import { EndpointCompletedOutput, EndpointInputPayload } from 'runpod-sdk';
+import { MemoryVectorStore } from 'langchain/vectorstores/memory';
+import { createStuffDocumentsChain } from 'langchain/chains/combine_documents';
+import { createRetrievalChain } from 'langchain/chains/retrieval';
 
 export type QuizGeneratorLlm =
   | {
@@ -37,9 +39,7 @@ export class QuizGenerator {
     private readonly chunkSize: number,
     private readonly chunkOverlap: number,
     private readonly llm: QuizGeneratorLlm,
-    private readonly numberOfQuestions: number,
-    private readonly unstructuredApiUrl: string,
-    private readonly unstructuredApiKey?: string
+    private readonly numberOfQuestions: number
   ) {
     if (llm.type === LlmHost.OLLAMA_LOCAL) {
       llm.model.bindTools([QuizSchema]);
@@ -105,67 +105,34 @@ export class QuizGenerator {
     throw new Error('Logic error in invokeModel');
   }
 
-  async generateQa(
-    input:
-      | (({ type: 'text' } | { type: 'file-path' }) & {
-          content: string;
-        })
-      | {
-          type: 'md';
-          content: Buffer;
-          fileName: string;
-        }
-      | {
-          type: 'pdf';
-          content: Blob;
-          fileName: string;
-        }
-  ) {
-    const { content, type } = input;
-    let chunks;
-    if (type === 'file-path') {
-      const fileExt = path.extname(content);
-      let loader;
-      switch (fileExt) {
-        case '.txt':
-        case '.md':
-          loader = new UnstructuredLoader(content, {
-            apiKey: this.unstructuredApiKey,
-            apiUrl: this.unstructuredApiUrl,
-          });
-          break;
-        case '.pdf':
-          loader = new PDFLoader(content);
-          break;
-        default:
-          throw new Error(`File of type ${fileExt} is not supported.`);
+  async handleMarkdown({
+    buffer,
+    unstructuredApiUrl,
+    unstructuredApiKey,
+  }: {
+    buffer: Buffer;
+    unstructuredApiKey?: string;
+    unstructuredApiUrl: string;
+  }): Promise<Quiz> {
+    const fileName = 'file';
+
+    const loader = new UnstructuredLoader(
+      {
+        buffer: buffer,
+        fileName: fileName,
+      },
+      {
+        apiKey: unstructuredApiKey,
+        apiUrl: unstructuredApiUrl,
       }
-      chunks = await this.fileProcessing(loader);
-    }
-    if (type === 'md') {
-      const loader = new UnstructuredLoader(
-        {
-          buffer: input.content,
-          fileName: input.fileName,
-        },
-        {
-          apiKey: this.unstructuredApiKey,
-          apiUrl: this.unstructuredApiUrl,
-        }
-      );
-      chunks = await this.fileProcessing(loader);
-    }
-    if (type === 'pdf') {
-      const loader = new PDFLoader(content);
-      chunks = await this.fileProcessing(loader);
-    }
-    if (type === 'text') {
-      chunks = this.textSplitter(content);
-    }
+    );
+    const chunks = await this.fileProcessing(loader);
+
+    log.debug(`Length of chunks: ${chunks.length}`);
+
     this.numberOfOuestionsPerChunk = Math.ceil(
       this.numberOfQuestions / chunks.length
     );
-    log.debug(`Length of chunks: ${chunks.length}`);
 
     const quiz: Quiz = { questions: [] };
     for (const chunk of chunks) {
@@ -183,5 +150,71 @@ export class QuizGenerator {
       );
     }
     return quiz;
+  }
+
+  async handlePdf({ buffer }: { buffer: Buffer }): Promise<Quiz> {
+    if (this.llm.type !== LlmHost.OLLAMA_LOCAL) {
+      throw new Error(`PDF support only for llm host ${LlmHost.OLLAMA_LOCAL}`);
+    }
+    const loader = new PDFLoader(new Blob([buffer]));
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: this.chunkSize,
+      chunkOverlap: this.chunkOverlap,
+    });
+
+    log.debug('Loading pdf doc');
+    const docs = await loader.load();
+
+    log.debug('Splitting pdf doc');
+    const splits = await textSplitter.splitDocuments(docs);
+
+    log.debug('Creating vector store');
+    const vectorstore = await MemoryVectorStore.fromDocuments(
+      splits,
+      // new OpenAIEmbeddings()
+      new OllamaEmbeddings({
+        model: 'mxbai-embed-large',
+      })
+    );
+
+    const retriever = vectorstore.asRetriever();
+
+    const prompt = ChatPromptTemplate.fromMessages([
+      ['system', genSysPrompt()],
+      ['human', '{input}'],
+    ]);
+
+    const quizGenChain = await createStuffDocumentsChain({
+      llm: this.llm.model,
+      prompt,
+    });
+
+    log.debug('Creating retrieval chain');
+    const ragChain = await createRetrievalChain({
+      retriever,
+      combineDocsChain: quizGenChain,
+    });
+
+    log.debug('Invoking chain');
+    const results = await ragChain.invoke({
+      input: 'Please create a quiz',
+    });
+
+    return JSON.parse(results.answer);
+  }
+
+  async generateQa(input: DocumentInput & { buffer: Buffer }) {
+    const { documentType } = input;
+
+    if (documentType === DocumentType.MD) {
+      return await this.handleMarkdown(input);
+    }
+    if (documentType === DocumentType.PDF) {
+      return await this.handlePdf(input);
+    }
+
+    throw new Error(
+      `Logic error in generateQa - unhandled doc type ${documentType}`
+    );
   }
 }
