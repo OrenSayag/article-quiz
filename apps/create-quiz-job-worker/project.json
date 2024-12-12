@@ -12,8 +12,8 @@
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/create-quiz-job-worker",
-        "format": ["cjs"],
-        "bundle": false,
+        "format": ["esm"],
+        "bundle": true,
         "main": "apps/create-quiz-job-worker/src/main.ts",
         "tsConfig": "apps/create-quiz-job-worker/tsconfig.app.json",
         "assets": ["apps/create-quiz-job-worker/src/assets"],

@@ -6,8 +6,12 @@ import { InputContent, JobStatus, JobType } from '@article-quiz/shared-types';
 import { handleJob } from './methods/handle-job';
 import { LlmHost } from '@article-quiz/quiz-generation-llm';
 
-const UNSTRUCTURED_API_URL = process.env['UNSTRUCTURED_API_URL'];
-const UNSTRUCTURED_API_KEY = process.env['UNSTRUCTURED_API_KEY'];
+const {
+  UNSTRUCTURED_API_URL,
+  UNSTRUCTURED_API_KEY,
+  // RUNPOD_API_KEY,
+  // RUNPOD_ENDPOINT_ID,
+} = process.env;
 
 if (!UNSTRUCTURED_API_URL) {
   throw new Error('Missing env var UNSTRUCTURED_API_URL');

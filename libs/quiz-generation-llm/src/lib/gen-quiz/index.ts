@@ -1,11 +1,13 @@
 import { ChatOllama } from '@langchain/ollama';
-import { QuizGenerator } from './quiz-generator';
+import { QuizGenerator, QuizGeneratorLlm } from './quiz-generator';
 import { Quiz } from '@article-quiz/shared-types';
 import { Replicate } from '@langchain/community/llms/replicate';
+import runpodSdk from 'runpod-sdk';
 
 export enum LlmHost {
   OLLAMA_LOCAL = 'ollama-local',
   REPLICATE = 'replicate',
+  RUNPOD = 'runpod',
 }
 
 export type LlmConfig =
@@ -17,6 +19,11 @@ export type LlmConfig =
   | {
       host: LlmHost.OLLAMA_LOCAL;
       model: string;
+    }
+  | {
+      host: LlmHost.RUNPOD;
+      endpointId: string;
+      apiKey: string;
     };
 
 type Input = {
@@ -34,32 +41,49 @@ export const genQuiz = async ({
   unstructuredApiKey,
   llmConfig,
 }: Input): Promise<Output> => {
-  let llm;
+  let quizGeneratorLlm: QuizGeneratorLlm | undefined = undefined;
   if (llmConfig.host === LlmHost.OLLAMA_LOCAL) {
-    llm = new ChatOllama({
-      model: llmConfig.model,
-      temperature: 0.1,
-      maxRetries: 2,
-      format: 'json',
-      keepAlive: -1,
-    });
+    quizGeneratorLlm = {
+      type: llmConfig.host,
+      model: new ChatOllama({
+        model: llmConfig.model,
+        temperature: 0.1,
+        maxRetries: 2,
+        format: 'json',
+        keepAlive: -1,
+      }),
+    };
   }
   if (llmConfig.host === LlmHost.REPLICATE) {
-    llm = new Replicate({
-      model: llmConfig.model,
-      apiKey: llmConfig.apiKey,
-      input: {
-        temperature: 0.1,
-      },
-    });
+    quizGeneratorLlm = {
+      type: llmConfig.host,
+      model: new Replicate({
+        model: llmConfig.model,
+        apiKey: llmConfig.apiKey,
+        input: {
+          temperature: 0.1,
+        },
+      }),
+    };
+  }
+  if (llmConfig.host === LlmHost.RUNPOD) {
+    const runpod = runpodSdk(llmConfig.apiKey);
+    const endpoint = runpod.endpoint(llmConfig.endpointId);
+    if (!endpoint) {
+      throw new Error(`Error instantiating runpod endpoint`);
+    }
+    quizGeneratorLlm = {
+      type: llmConfig.host,
+      model: endpoint,
+    };
+  }
+  if (!quizGeneratorLlm) {
+    throw new Error(`Logic error in genQuiz: quizGeneratorLlm is not defined.`);
   }
   const generator = new QuizGenerator(
     5_000,
     50,
-    {
-      type: llmConfig.host,
-      model: llm,
-    },
+    quizGeneratorLlm,
     5,
     unstructuredApiUrl,
     unstructuredApiKey

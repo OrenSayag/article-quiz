@@ -10,21 +10,33 @@ import { genSysPrompt } from './gen-sys-prompt';
 import { log } from '@article-quiz/logger';
 import { LlmHost } from '@article-quiz/quiz-generation-llm';
 import { Replicate } from '@langchain/community/llms/replicate';
+import { EndpointCompletedOutput, EndpointInputPayload } from 'runpod-sdk';
+
+export type QuizGeneratorLlm =
+  | {
+      type: LlmHost.OLLAMA_LOCAL;
+      model: ChatOllama;
+    }
+  | {
+      type: LlmHost.REPLICATE;
+      model: Replicate;
+    }
+  | {
+      type: LlmHost.RUNPOD;
+      model: {
+        runSync(
+          request: EndpointInputPayload,
+          timeout?: number
+        ): Promise<EndpointCompletedOutput>;
+      };
+    };
 
 export class QuizGenerator {
   numberOfOuestionsPerChunk: number;
   constructor(
     private readonly chunkSize: number,
     private readonly chunkOverlap: number,
-    private readonly llm:
-      | {
-          type: LlmHost.OLLAMA_LOCAL;
-          model: ChatOllama;
-        }
-      | {
-          type: LlmHost.REPLICATE;
-          model: Replicate;
-        },
+    private readonly llm: QuizGeneratorLlm,
     private readonly numberOfQuestions: number,
     private readonly unstructuredApiUrl: string,
     private readonly unstructuredApiKey?: string
@@ -57,11 +69,40 @@ export class QuizGenerator {
   }
 
   createLlmChain(): Runnable {
+    if (this.llm.type !== LlmHost.OLLAMA_LOCAL) {
+      throw new Error(
+        `Invalid method call - should not call createLlmChain when llmHost is not ${LlmHost.OLLAMA_LOCAL}`
+      );
+    }
     const prompt = ChatPromptTemplate.fromTemplate(genSysPrompt());
 
-    const chain = prompt.pipe(this.llm.model as ChatOllama);
+    const chain = prompt.pipe(this.llm.model);
 
     return chain;
+  }
+
+  async invokeModel(context: string): Promise<string> {
+    if (this.llm.type === LlmHost.OLLAMA_LOCAL) {
+      const llmChain = this.createLlmChain();
+      const { content } = await llmChain.invoke({
+        context,
+      });
+      return content;
+    }
+    const prompt = genSysPrompt().replace(`{context}`, context);
+    if (this.llm.type === LlmHost.REPLICATE) {
+      const res = await this.llm.model.invoke(prompt);
+      return res;
+    }
+    if (this.llm.type === LlmHost.RUNPOD) {
+      const res = await this.llm.model.runSync({
+        input: {
+          prompt,
+        },
+      });
+      return res.output as string;
+    }
+    throw new Error('Logic error in invokeModel');
   }
 
   async generateQa(
@@ -125,31 +166,12 @@ export class QuizGenerator {
       this.numberOfQuestions / chunks.length
     );
     log.debug(`Length of chunks: ${chunks.length}`);
-    let llmChain;
-    if (this.llm.type === LlmHost.OLLAMA_LOCAL) {
-      llmChain = this.createLlmChain();
-    }
+
     const quiz: Quiz = { questions: [] };
     for (const chunk of chunks) {
       const now = new Date().getTime();
-      let subQuizJson;
-      if (this.llm.type === LlmHost.OLLAMA_LOCAL) {
-        const { content } = await llmChain.invoke({
-          context: chunk,
-        });
-        subQuizJson = content;
-      } else {
-        const prompt = genSysPrompt().replace(`{context}`, chunk);
-        // fs.writeFileSync(
-        //   `/Users/oren.s/projects/personal/article-quiz/temp/prompt${
-        //     chunks.indexOf(chunk) + 1
-        //   }.json`,
-        //   prompt
-        // );
-        const res = await this.llm.model.invoke(prompt);
-        log.debug({ res });
-        subQuizJson = res;
-      }
+      const subQuizJson = await this.invokeModel(chunk);
+
       const timeTakenToInvoke = (Date.now() - now) / 1_000 + ' seconds';
       log.debug({
         timeTakenToInvoke,
