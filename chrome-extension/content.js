@@ -31,6 +31,11 @@ async function loadQuiz() {
         method: 'GET',
       }
     );
+    if (res.status === 404) {
+      showSpinner(false);
+      quizNotFound();
+      return;
+    }
     const success = res.status.toString()[0] === '2';
     if (success) {
       const resBody = await res.json();
@@ -137,6 +142,16 @@ function showSpinner(isVisible) {
   document.getElementById('spinner').style.display = isVisible
     ? 'block'
     : 'none';
+}
+
+function quizNotFound() {
+  const quizContainer = document.getElementById('quizContainer');
+  quizContainer.innerHTML = ''; // Clear previous content
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'quiz-not-found';
+  messageDiv.textContent = 'Quiz not found';
+
+  quizContainer.appendChild(messageDiv);
 }
 
 function createQuiz(quizData) {
