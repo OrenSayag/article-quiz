@@ -14,7 +14,7 @@ function setQuizData(quizData) {
 async function loadQuiz() {
   const currentUrl = window.location.href;
   const backendUrl = 'http://localhost:3000/api/';
-  const getQuizPath = 'quiz-generator';
+  const getQuizPath = 'quiz';
   let quizData = getQuizData();
   if (quizData) {
     createQuiz(quizData);
@@ -22,15 +22,17 @@ async function loadQuiz() {
   }
   showSpinner(true);
   try {
-    const res = await fetch(backendUrl + getQuizPath, {
-      method: 'POST',
-      body: JSON.stringify({
-        type: 'url',
-        data: { url: currentUrl },
-      }),
-      headers: { 'Content-Type': 'application/json' },
+    const searchParams = new URLSearchParams({
+      quizSource: currentUrl,
     });
-    if (res.status === 201) {
+    const res = await fetch(
+      backendUrl + getQuizPath + `?${searchParams.toString()}`,
+      {
+        method: 'GET',
+      }
+    );
+    const success = res.status.toString()[0] === '2';
+    if (success) {
       const resBody = await res.json();
       quizData = resBody.data;
       setQuizData(quizData);
