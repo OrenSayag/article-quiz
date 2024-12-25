@@ -5,6 +5,10 @@ type Input =
     }
   | {
       type: 'attached-file';
+    }
+  | {
+      type: 'hard-coded';
+      content: string;
     };
 
 type Output = string;
@@ -13,7 +17,7 @@ export const genPrompt = (input: Input): Output => {
   const { type } = input;
   const base = `
       I need you to generate a quiz based on the article markdown in the ${
-        type === 'url' ? 'URL' : 'file'
+        type === 'url' ? 'URL' : type === 'attached-file' ? 'file' : 'markdown'
       } I will provide you.
       Your answer must be a JSON object of structure (following are typescript types):
 
@@ -44,6 +48,8 @@ export const genPrompt = (input: Input): Output => {
       ${
         type === 'url'
           ? `The MD is:\n\n      <MD>https://r.jina.ai/${input.contentUrl}</MD>`
+          : type === 'hard-coded'
+          ? `The markdown content is: ${input.content}`
           : ''
       }
       `;

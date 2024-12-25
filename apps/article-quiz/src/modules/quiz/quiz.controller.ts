@@ -35,10 +35,10 @@ export class QuizController {
   }
   @Get('')
   async getQuiz(
-    @Query('quizSource') quizSource: string
+    @Query(new ZodValidationPipe(InputContentSchema)) inputContent: InputContent
   ): Promise<GetQuizResponseBody> {
     const quiz = await this.quizService.getQuiz({
-      quizSource,
+      inputContent,
     });
     return {
       success: true,

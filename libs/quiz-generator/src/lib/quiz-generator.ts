@@ -5,7 +5,7 @@ import { InputContent, URLContent } from '@article-quiz/shared-types';
 
 type ClaudeInput = {
   generator: QuizGenerator.CLAUDE;
-} & InputContent;
+} & Parameters<typeof generateQuizClaude>[0];
 
 type GPT4OInput = {
   generator: QuizGenerator.GPT_4_O;

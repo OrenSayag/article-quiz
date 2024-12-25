@@ -45,9 +45,20 @@ export const handleJob = async ({ data, id, modelUsed, llmConfig }: Input) => {
     const quiz = await genQuiz({
       llmConfig,
       documentInput: {
-        documentType: DocumentType.PDF,
+        documentType: DocumentType.MD,
+        unstructuredApiKey: '',
+        unstructuredApiUrl: '',
       },
-      buffer: pdf.content,
+      buffer:
+        data.contentType === 'url'
+          ? Buffer.from(
+              await urlToMd({
+                url: data.url,
+                ...mdGenOpts,
+              }),
+              'utf-8'
+            )
+          : pdf.content,
     });
     const endTime = Date.now();
     log.debug(`Saving quiz to db`);

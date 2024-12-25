@@ -1,12 +1,15 @@
 import { getQuiz as _getQuiz } from '@article-quiz/db';
+import { InputContent } from '@article-quiz/shared-types';
 
 type Input = {
-  quizSource: string;
+  inputContent: InputContent;
+  claudeApiKey: string;
 };
 
-export const getQuiz = async ({ quizSource }: Input) => {
+export const getQuiz = async ({ inputContent, claudeApiKey }: Input) => {
   return _getQuiz({
     type: 'quiz-source',
-    quizSource,
+    claudeApiKey,
+    inputContent,
   });
 };

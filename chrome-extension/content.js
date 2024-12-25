@@ -23,7 +23,8 @@ async function loadQuiz() {
   showSpinner(true);
   try {
     const searchParams = new URLSearchParams({
-      quizSource: currentUrl,
+      url: currentUrl,
+      contentType: 'url',
     });
     const res = await fetch(
       backendUrl + getQuizPath + `?${searchParams.toString()}`,

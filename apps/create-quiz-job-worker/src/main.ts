@@ -6,12 +6,8 @@ import { InputContent, JobStatus, JobType } from '@article-quiz/shared-types';
 import { handleJob } from './methods/handle-job';
 import { LlmHost } from '@article-quiz/quiz-generation-llm';
 
-const {
-  UNSTRUCTURED_API_URL,
-  UNSTRUCTURED_API_KEY,
-  // RUNPOD_API_KEY,
-  // RUNPOD_ENDPOINT_ID,
-} = process.env;
+const { UNSTRUCTURED_API_URL, UNSTRUCTURED_API_KEY, CLAUDE_API_KEY } =
+  process.env;
 
 if (!UNSTRUCTURED_API_URL) {
   throw new Error('Missing env var UNSTRUCTURED_API_URL');
@@ -43,10 +39,10 @@ const main = async (jobStatuses: JobStatus[]) => {
         data: job.data as InputContent,
         unstructuredApiUrl: UNSTRUCTURED_API_URL,
         unstructuredApiKey: UNSTRUCTURED_API_KEY ?? '',
-        modelUsed: 'qwq local',
+        modelUsed: 'claude api',
         llmConfig: {
-          host: LlmHost.OLLAMA_LOCAL,
-          model: 'qwq',
+          host: LlmHost.CLAUDE,
+          apiKey: CLAUDE_API_KEY!,
         },
       });
     } catch (e) {

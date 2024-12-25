@@ -1,13 +1,18 @@
 import { ChatOllama } from '@langchain/ollama';
-import { QuizGenerator, QuizGeneratorLlm } from './quiz-generator';
+import { QuizGeneratorLlm, QuizGenerator } from './quiz-generator';
 import { Quiz } from '@article-quiz/shared-types';
 import { Replicate } from '@langchain/community/llms/replicate';
 import runpodSdk from 'runpod-sdk';
+import {
+  QuizGenerator as QuizGeneratorService,
+  quizGenerator,
+} from '@orensayag/article-quiz-quiz-generator';
 
 export enum LlmHost {
   OLLAMA_LOCAL = 'ollama-local',
   REPLICATE = 'replicate',
   RUNPOD = 'runpod',
+  CLAUDE = 'claude',
 }
 
 export type LlmConfig =
@@ -15,6 +20,10 @@ export type LlmConfig =
       host: LlmHost.REPLICATE;
       apiKey: string;
       model: `${string}/${string}:${string}`;
+    }
+  | {
+      host: LlmHost.CLAUDE;
+      apiKey: string;
     }
   | {
       host: LlmHost.OLLAMA_LOCAL;
@@ -52,6 +61,16 @@ type Output = Quiz;
 export const genQuiz = async (input: Input): Promise<Output> => {
   const { llmConfig, buffer, documentInput } = input;
   let quizGeneratorLlm: QuizGeneratorLlm | undefined = undefined;
+  if (llmConfig.host === LlmHost.CLAUDE) {
+    if (documentInput.documentType !== 'md') {
+      throw new Error('CLAUDE quiz generation supports md content only');
+    }
+    return await quizGenerator({
+      generator: QuizGeneratorService.CLAUDE,
+      apiKey: llmConfig.apiKey,
+      mdContent: buffer.toString(),
+    });
+  }
   if (llmConfig.host === LlmHost.OLLAMA_LOCAL) {
     quizGeneratorLlm = {
       type: llmConfig.host,
@@ -90,7 +109,6 @@ export const genQuiz = async (input: Input): Promise<Output> => {
   if (!quizGeneratorLlm) {
     throw new Error(`Logic error in genQuiz: quizGeneratorLlm is not defined.`);
   }
-  // const generator = new QuizGenerator(5_000, 50, quizGeneratorLlm, 5);
   const generator = new QuizGenerator(1_000, 200, quizGeneratorLlm, 5);
   const quiz = await generator.generateQa({
     ...documentInput,

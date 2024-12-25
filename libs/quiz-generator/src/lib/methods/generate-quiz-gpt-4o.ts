@@ -40,5 +40,5 @@ export const generateQuizGpt4o = async ({
       type: 'json_object',
     },
   });
-  return JSON.parse(response.choices[0].message.content);
+  return JSON.parse(response.choices[0].message.content!);
 };
