@@ -1,0 +1,9 @@
+{
+  "name": "preset",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ui/preset/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project preset --web",
+  "targets": {}
+}

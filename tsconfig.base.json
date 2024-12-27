@@ -16,9 +16,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@article-quiz/components": ["libs/ui/components/src/index.ts"],
       "@article-quiz/db": ["libs/db/src/index.ts"],
       "@article-quiz/jina-ai": ["libs/jina-ai/src/index.ts"],
       "@article-quiz/logger": ["libs/logger/src/index.ts"],
+      "@article-quiz/next-services": ["libs/next-services/src/index.ts"],
+      "@article-quiz/next-services/server": [
+        "libs/next-services/src/server.ts"
+      ],
+      "@article-quiz/preset": ["libs/ui/preset/src/global.css"],
       "@article-quiz/prompt-generation": [
         "libs/prompt-generation/src/index.ts"
       ],
@@ -26,10 +32,8 @@
         "libs/quiz-generation-llm/src/index.ts"
       ],
       "@article-quiz/shared-types": ["libs/shared-types/src/index.ts"],
+      "@article-quiz/ui-utils": ["libs/ui/ui-utils/src/index.ts"],
       "@article-quiz/utils": ["libs/utils/src/index.ts"],
-      "@orensayag/article-quiz-quiz-generator": [
-        "libs/quiz-generator/src/index.ts"
-      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
