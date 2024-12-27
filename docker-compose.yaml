@@ -11,6 +11,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '3306:3306'
+    volumes:
+      - article-quiz-db:/var/lib/mysql
   dbgate:
     build: docker
     image: dbgate/dbgate:alpine
@@ -22,3 +24,4 @@ services:
       - dbgate-data:/root/.dbgate
 volumes:
   dbgate-data:
+  article-quiz-db:
