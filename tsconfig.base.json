@@ -29,8 +29,7 @@
       "@article-quiz/utils": ["libs/utils/src/index.ts"],
       "@orensayag/article-quiz-quiz-generator": [
         "libs/quiz-generator/src/index.ts"
-      ],
-      "@orensayag/article-quiz-site-reader": ["libs/site-reader/src/index.ts"]
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

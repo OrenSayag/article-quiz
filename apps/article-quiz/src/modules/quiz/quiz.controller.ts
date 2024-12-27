@@ -13,14 +13,14 @@ import { z } from 'zod';
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
-  @Post('')
-  async genQuiz(
+  @Post('job')
+  async genQuizJob(
     @Body(new ZodValidationPipe(z.array(InputContentSchema)))
     data: InputContent[]
   ): Promise<GenQuizResponseBody> {
     await Promise.all(
       data.map((d) =>
-        this.quizService.createQuiz({
+        this.quizService.createQuizJob({
           ...d,
         })
       )

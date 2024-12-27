@@ -3,7 +3,7 @@ import { createJob } from '@article-quiz/db';
 
 type Input = InputContent;
 
-export const createQuiz = async (input: Input) => {
+export const createQuizJob = async (input: Input) => {
   await createJob({
     type: JobType.CREATE_QUIZ,
     data: input,
