@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Article Quiz",
+  "version": "1.0.0",
+  "description": "Build knowledge",
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": []
+}
