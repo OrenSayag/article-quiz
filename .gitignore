@@ -48,3 +48,5 @@ vite.config.*.timestamp*
 # Next.js
 .next
 out
+
+storybook-static
