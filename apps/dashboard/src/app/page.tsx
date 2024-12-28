@@ -1,9 +1,5 @@
-import { Button } from '@article-quiz/components';
+import { redirect } from 'next/navigation';
 
-export default function Index() {
-  return (
-    <div>
-      <Button>Hello dashboard</Button>
-    </div>
-  );
+export default async function Index() {
+  redirect('/auth/login');
 }
