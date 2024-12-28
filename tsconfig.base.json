@@ -34,7 +34,8 @@
       "@article-quiz/shared-types": ["libs/shared-types/src/index.ts"],
       "@article-quiz/ui-utils": ["libs/ui/ui-utils/src/index.ts"],
       "@article-quiz/utils": ["libs/utils/src/index.ts"]
-    }
+    },
+    "jsx": "react"
   },
   "exclude": ["node_modules", "tmp"]
 }

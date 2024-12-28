@@ -1,4 +1,5 @@
 import '@article-quiz/preset';
+import { ThemeProvider } from '@article-quiz/components';
 
 export const metadata = {
   title: 'Article Quiz',
@@ -12,7 +13,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
