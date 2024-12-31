@@ -1,9 +1,16 @@
 'use client';
 
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { cn } from '@article-quiz/ui-utils';
 import { Avatar, AvatarFallback, AvatarImage } from '../../shadcn/avatar';
 import { Session } from 'next-auth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../shadcn/dropdown-menu';
+import { signOut } from 'next-auth/react';
 
 interface Props {
   className?: string;
@@ -35,10 +42,17 @@ function ProfilePic({ url, name }: { url?: string; name?: string }) {
     .map((str) => str[0])
     .join('');
   return (
-    <Avatar>
-      <AvatarImage src={url} alt="avatar" />
-      <AvatarFallback>{fallbcakStr ?? ''}</AvatarFallback>
-    </Avatar>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Avatar>
+          <AvatarImage src={url} alt="avatar" />
+          <AvatarFallback>{fallbcakStr ?? ''}</AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
