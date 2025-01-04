@@ -1,3 +1,5 @@
+import { DashboardTemplate } from '@article-quiz/components';
+
 export default async function Dashboard() {
-  return <div>Dashboard</div>;
+  return <DashboardTemplate />;
 }
