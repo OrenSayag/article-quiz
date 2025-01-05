@@ -1,7 +1,7 @@
 import { auth } from '../../../auth';
-import { getUserInfo } from '@article-quiz/next-services/server';
+import { updateUserEnabledSites } from '@article-quiz/next-services/server';
 
-export async function GET(request: Request) {
+export async function PUT(request: Request) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': request.headers.get('origin') ?? '',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -15,10 +15,12 @@ export async function GET(request: Request) {
       headers: corsHeaders,
     });
   }
-  const userInfo = await getUserInfo({
+  const reqBody = await request.json();
+  const beRes = await updateUserEnabledSites({
     userId: session.user.id,
+    ...reqBody,
   });
-  return Response.json(userInfo, {
+  return Response.json(beRes, {
     headers: corsHeaders,
   });
 }

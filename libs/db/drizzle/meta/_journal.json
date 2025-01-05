@@ -22,6 +22,27 @@
       "when": 1733865833476,
       "tag": "0002_stormy_toro",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1736007018142,
+      "tag": "0003_great_tiger_shark",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1736007741943,
+      "tag": "0004_right_weapon_omega",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1736008061484,
+      "tag": "0005_plain_sleepwalker",
+      "breakpoints": true
     }
   ]
 }

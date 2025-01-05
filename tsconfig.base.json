@@ -25,6 +25,7 @@
         "libs/next-services/src/server.ts"
       ],
       "@article-quiz/preset": ["libs/ui/preset/src/global.css"],
+      "@article-quiz/quiz-generator": ["libs/quiz-generator/src/index.ts"],
       "@article-quiz/prompt-generation": [
         "libs/prompt-generation/src/index.ts"
       ],

@@ -5,3 +5,7 @@ export * from './lib/methods/jobs/create-job';
 export * from './lib/methods/jobs/update-job';
 export * from './lib/methods/jobs/update-job';
 export * from './lib/methods/jobs/list-jobs';
+export * from './lib/methods/user/get-user';
+export * from './lib/methods/user/update-user';
+export * from './config';
+export * from './schema';

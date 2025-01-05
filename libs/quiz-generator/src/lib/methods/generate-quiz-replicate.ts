@@ -1,6 +1,6 @@
-import { Quiz } from '@orensayag/article-quiz-quiz-generator';
 import Replicate from 'replicate';
 import { genPrompt } from './gen-prompt';
+import { Quiz } from '@article-quiz/shared-types';
 
 type Input = {
   apiKey: string;

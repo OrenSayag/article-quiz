@@ -7,8 +7,15 @@ import type { NextAuthOptions } from 'next-auth';
 import { getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import env from './config';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { accounts, db, sessions, users } from '@article-quiz/db';
 
 export const authConfig = {
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+  }),
   secret: process.env.AUTH_SECRET,
   providers: [
     GoogleProvider({
@@ -16,6 +23,14 @@ export const authConfig = {
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  callbacks: {
+    session: async ({ session, token, user }) => {
+      if (session?.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
   cookies: {
     sessionToken: {
       name: `next-auth.session-token`,
