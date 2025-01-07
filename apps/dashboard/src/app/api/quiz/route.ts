@@ -1,7 +1,9 @@
 import { auth } from '../../../auth';
-import { getUserInfo } from '@article-quiz/next-services/server';
+import { getQuiz } from '@article-quiz/next-services/server';
+import { InputContent } from '@article-quiz/shared-types';
+import { NextRequest } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': request.headers.get('origin') ?? '',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -15,10 +17,15 @@ export async function GET(request: Request) {
       headers: corsHeaders,
     });
   }
-  const userInfo = await getUserInfo({
+  const searchParams = request.nextUrl.searchParams;
+
+  const rb = await getQuiz({
     userId: session.user!.id,
+    type: searchParams.get('type') as InputContent['contentType'],
+    source: searchParams.get('source')!,
   });
-  return Response.json(userInfo, {
+
+  return Response.json(rb, {
     headers: corsHeaders,
   });
 }
