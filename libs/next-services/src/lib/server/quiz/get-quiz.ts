@@ -7,7 +7,7 @@ type Input = {
   source: string;
 };
 
-type Output = GetQuizResponseBody;
+type Output = GetQuizResponseBody & { status: number };
 
 export const getQuiz = async ({
   userId,
@@ -24,5 +24,5 @@ export const getQuiz = async ({
     userId,
   });
   const rbody: GetQuizResponseBody = await res.json();
-  return rbody;
+  return { ...rbody, status: res.status };
 };

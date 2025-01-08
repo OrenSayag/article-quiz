@@ -22,5 +22,6 @@ export async function PUT(request: Request) {
   });
   return Response.json(beRes, {
     headers: corsHeaders,
+    status: beRes.status,
   });
 }

@@ -27,5 +27,6 @@ export async function GET(request: NextRequest) {
 
   return Response.json(rb, {
     headers: corsHeaders,
+    status: rb.status,
   });
 }

@@ -10,7 +10,7 @@ type Input = UpdateEnabledSitesParams & {
   userId: string;
 };
 
-type Output = UpdateEnabledSitesResponse;
+type Output = UpdateEnabledSitesResponse & { status: number };
 
 export const updateUserEnabledSites = async ({
   userId,
@@ -25,5 +25,5 @@ export const updateUserEnabledSites = async ({
     userId,
   });
   const rbody: UpdateEnabledSitesResponse = await res.json();
-  return rbody;
+  return { ...rbody, status: res.status };
 };
