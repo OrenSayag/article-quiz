@@ -24,3 +24,5 @@ export const InputContentSchema = z.discriminatedUnion('contentType', [
 ]);
 
 export type InputContent = z.infer<typeof InputContentSchema>;
+
+export const numericStringSchema = z.string().regex(new RegExp('^[0-9]*$'));

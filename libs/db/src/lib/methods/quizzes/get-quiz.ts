@@ -13,7 +13,11 @@ type Input =
       id: number;
     };
 
-type Output = Quiz | 'not-found';
+type Output =
+  | (Quiz & {
+      id: number;
+    })
+  | 'not-found';
 
 export const getQuiz = async (input: Input): Promise<Output> => {
   const { type } = input;
@@ -35,7 +39,7 @@ export const getQuiz = async (input: Input): Promise<Output> => {
   }
   const res = await db.select().from(quizzes).where(cond);
   if (res.length > 0) {
-    return res[0].data;
+    return { ...res[0].data, id: res[0].id };
   }
   return 'not-found';
 };

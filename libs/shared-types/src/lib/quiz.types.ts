@@ -31,3 +31,9 @@ export const quizSchema = z.object({
 export type GenQuizResponseBody = ApiBaseResponse<undefined>;
 
 export type GetQuizResponseBody = ApiBaseResponse<Quiz>;
+
+export type UserQuizHistoryLog = {
+  quizSource: string;
+  facivonUrl?: string;
+  createdAt: string;
+};

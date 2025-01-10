@@ -53,6 +53,17 @@ export const users = mysqlTable('user', {
   enabledSites: json('enabled_sites').$type<string[]>(),
 });
 
+export const userQuizHistory = mysqlTable('user_quiz_history', {
+  id: int().primaryKey().autoincrement(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').onUpdateNow(),
+  quiz: int().references(() => quizzes.id, {
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
+  }),
+  user: varchar({ length: 255 }).references(() => users.id),
+});
+
 export const accounts = mysqlTable(
   'account',
   {

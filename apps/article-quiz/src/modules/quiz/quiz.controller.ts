@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import {
   GenQuizResponseBody,
@@ -8,10 +8,14 @@ import {
 } from '@article-quiz/shared-types';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { z } from 'zod';
+import { REQUEST } from '@nestjs/core';
 
 @Controller('quiz')
 export class QuizController {
-  constructor(private readonly quizService: QuizService) {}
+  constructor(
+    private readonly quizService: QuizService,
+    @Inject(REQUEST) private readonly request: Request
+  ) {}
 
   @Post('job')
   async genQuizJob(
@@ -39,6 +43,7 @@ export class QuizController {
   ): Promise<GetQuizResponseBody> {
     const quiz = await this.quizService.getQuiz({
       inputContent,
+      userId: this.request.user!.id,
     });
     return {
       success: true,

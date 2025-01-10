@@ -1,14 +1,19 @@
-import { Body, Controller, Get, Inject, Put } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Put, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { REQUEST } from '@nestjs/core';
 import {
   GetUserInfoResponse,
+  getUserQuizHistoryParams,
+  GetUserQuizHistoryResponseBody,
   UpdateEnabledSitesResponse,
   updateEnabledSitesSchema,
 } from '@article-quiz/shared-types';
 import { createZodDto } from 'nestjs-zod';
 
 class UpdateEnabledSitesDto extends createZodDto(updateEnabledSitesSchema) {}
+class GetUserQuizHistoryParamsDto extends createZodDto(
+  getUserQuizHistoryParams
+) {}
 
 @Controller('user')
 export class UserController {
@@ -37,6 +42,20 @@ export class UserController {
       success: true,
       message: 'Successfully updated user enabled sites',
       data: undefined,
+    };
+  }
+  @Get('quiz-history')
+  async getUserQuizHistory(
+    @Query() params: GetUserQuizHistoryParamsDto
+  ): Promise<GetUserQuizHistoryResponseBody> {
+    const quizHistoryLogs = await this.userService.getUserQuizHistory({
+      userId: this.request.user!.id,
+      ...params,
+    });
+    return {
+      success: true,
+      message: 'Successfully got user quiz history',
+      data: quizHistoryLogs,
     };
   }
 }

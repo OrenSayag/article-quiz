@@ -6,10 +6,13 @@ import { generateQuizClaude } from '@article-quiz/quiz-generator';
 
 type Input = {
   inputContent: InputContent;
+  userId: string;
   claudeApiKey: string;
 };
 
-type Output = Quiz;
+type Output = Quiz & {
+  id: number;
+};
 
 export const getQuiz = async ({
   inputContent,
@@ -50,11 +53,11 @@ export const getQuiz = async ({
     mdContent: mdContent,
   });
   const end = new Date();
-  await createQuiz({
+  const { id } = await createQuiz({
     source,
     data: quiz,
     timeToCreateInMs: end.getTime() - start.getTime(),
     modelUsed: 'claude api',
   });
-  return quiz;
+  return { ...quiz, id };
 };

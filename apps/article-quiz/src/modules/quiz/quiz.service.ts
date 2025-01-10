@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createQuizJob as _createQuizJob } from './methods/create-quiz-job';
 import { getQuiz as _getQuiz } from './methods/get-quiz';
 import { ConfigService } from '@nestjs/config';
+import { logUserQuizHistory } from '@article-quiz/db';
 
 @Injectable()
 export class QuizService {
@@ -14,7 +15,19 @@ export class QuizService {
       ...(input as Parameters<typeof _createQuizJob>[0]),
     });
   }
-  getQuiz(input: Omit<Parameters<typeof _getQuiz>[0], 'claudeApiKey'>) {
-    return _getQuiz({ ...input, claudeApiKey: this.claudeApiKey });
+  async getQuiz(
+    input: Omit<
+      Parameters<typeof _getQuiz>[0] & {
+        userId: string;
+      },
+      'claudeApiKey'
+    >
+  ) {
+    const quiz = await _getQuiz({ ...input, claudeApiKey: this.claudeApiKey });
+    await logUserQuizHistory({
+      userId: input.userId,
+      quizId: quiz.id,
+    });
+    return { ...quiz, id: undefined };
   }
 }
