@@ -58,6 +58,13 @@ export const getQuiz = async ({
     data: quiz,
     timeToCreateInMs: end.getTime() - start.getTime(),
     modelUsed: 'claude api',
+    title: extractTitle(mdContent),
   });
   return { ...quiz, id };
 };
+
+function extractTitle(mdContent: string) {
+  const titleRegex = /^Title:\s*(.*)/m;
+  const match = mdContent.match(titleRegex);
+  return match ? match[1] : undefined;
+}

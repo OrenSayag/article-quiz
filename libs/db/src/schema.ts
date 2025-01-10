@@ -34,6 +34,7 @@ export const quizzes = mysqlTable('quizzes', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').onUpdateNow(),
   source: text().notNull(),
+  title: varchar({ length: 500 }),
   data: json('data').$type<Quiz>().notNull(),
   timeToCreateInMs: int('time_to_create_in_ms').notNull(),
   modelUsed: varchar('model_used', { length: 244 }),

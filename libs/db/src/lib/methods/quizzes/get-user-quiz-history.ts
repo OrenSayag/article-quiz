@@ -35,6 +35,7 @@ export const getUserQuizHistory = async ({
     history: res.map((record) => ({
       quizSource: record.quizzes.source,
       createdAt: record.user_quiz_history!.createdAt!.toISOString(),
+      title: record.quizzes.title ?? undefined,
     })),
     totalPages: Math.ceil(_count[0].count / limit),
   };

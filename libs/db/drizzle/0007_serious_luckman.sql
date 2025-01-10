@@ -1,0 +1,1 @@
+ALTER TABLE `quizzes` ADD `title` varchar(500);

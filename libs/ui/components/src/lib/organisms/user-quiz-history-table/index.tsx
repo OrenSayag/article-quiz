@@ -49,7 +49,7 @@ export const UserQuizHistoryTable: FC<Props> = ({
           className
         )}
       >
-        <Table heads={tableHeads} rows={rows} className={'flex-grow'} />
+        <Table heads={tableHeads} rows={rows} className={'flex-grow w-full'} />
         <Pagination {...paginationProps} />
       </div>
     </>
@@ -72,17 +72,24 @@ function useTable({
         cells: [
           {
             id: 'favicon',
-            content: <img src={l.faviconUrl} alt={'logo'} className={'w-4'} />,
+            content: (
+              <img
+                src={l.faviconUrl}
+                alt={'logo'}
+                className={'w-[16px] max-w-[16px]'}
+              />
+            ),
           },
           {
             id: 'quizSource',
+            className: 'break-all',
             content: (
               <Link
                 href={l.quizSource}
                 target={'_blank'}
                 className={'flex gap-2'}
               >
-                {l.quizSource}
+                {l.title ?? l.quizSource}
                 <span>
                   <ExternalLink size={10} />
                 </span>

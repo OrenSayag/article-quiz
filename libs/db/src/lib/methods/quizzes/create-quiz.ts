@@ -7,6 +7,7 @@ type Input = {
   data: Quiz;
   modelUsed: string;
   timeToCreateInMs: number;
+  title?: string;
 };
 
 type Output = {
@@ -18,12 +19,14 @@ export const createQuiz = async ({
   data,
   timeToCreateInMs,
   modelUsed,
+  title,
 }: Input): Promise<Output> => {
   const res = await db.insert(quizzes).values({
     source,
     data,
     timeToCreateInMs,
     modelUsed,
+    title,
   });
   return {
     id: res[0].insertId,
