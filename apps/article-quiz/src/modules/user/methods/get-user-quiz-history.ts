@@ -4,7 +4,7 @@ import { UserQuizHistoryLog } from '@article-quiz/shared-types';
 export const getUserQuizHistory = async (
   input: Parameters<typeof _getUserQuizHistory>[0]
 ) => {
-  const history = await _getUserQuizHistory(input);
+  const { history, totalPages } = await _getUserQuizHistory(input);
   const faviconUrls = {};
   for (const item of history) {
     const origin = getOrigin(item.quizSource);
@@ -12,10 +12,10 @@ export const getUserQuizHistory = async (
     if (!favUrl) {
       faviconUrls[origin] = getFaviconUrl(origin);
     }
-    item.facivonUrl = faviconUrls[origin];
+    item.faviconUrl = faviconUrls[origin];
   }
   const filteredHistory = filterOutConsecutiveSameSource(history);
-  return filteredHistory;
+  return { history: filteredHistory, totalPages };
 };
 
 function getOrigin(url: string) {

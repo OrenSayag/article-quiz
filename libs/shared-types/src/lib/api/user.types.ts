@@ -22,6 +22,7 @@ export type GetUserQuizHistoryLogParams = z.infer<
   typeof getUserQuizHistoryParams
 >;
 
-export type GetUserQuizHistoryResponseBody = ApiBaseResponse<
-  UserQuizHistoryLog[]
->;
+export type GetUserQuizHistoryResponseBody = ApiBaseResponse<{
+  history: UserQuizHistoryLog[];
+  totalPages: number;
+}>;

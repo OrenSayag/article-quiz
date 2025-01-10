@@ -34,6 +34,6 @@ export type GetQuizResponseBody = ApiBaseResponse<Quiz>;
 
 export type UserQuizHistoryLog = {
   quizSource: string;
-  facivonUrl?: string;
+  faviconUrl?: string;
   createdAt: string;
 };

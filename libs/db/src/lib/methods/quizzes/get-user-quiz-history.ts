@@ -1,5 +1,5 @@
 import { db, quizzes, userQuizHistory } from '../../..';
-import { desc, eq } from 'drizzle-orm';
+import { count, desc, eq } from 'drizzle-orm';
 import { UserQuizHistoryLog } from '@article-quiz/shared-types';
 
 type Input = {
@@ -8,7 +8,7 @@ type Input = {
   limit: number;
 };
 
-type Output = UserQuizHistoryLog[];
+type Output = { history: UserQuizHistoryLog[]; totalPages: number };
 
 export const getUserQuizHistory = async ({
   userId,
@@ -23,8 +23,19 @@ export const getUserQuizHistory = async ({
     .offset(offset)
     .limit(limit)
     .orderBy(desc(userQuizHistory.createdAt));
-  return res.map((record) => ({
-    quizSource: record.quizzes.source,
-    createdAt: record.user_quiz_history!.createdAt!.toISOString(),
-  }));
+  const _count = await db
+    .select({
+      count: count(),
+    })
+    .from(userQuizHistory)
+    .rightJoin(quizzes, eq(userQuizHistory.quiz, quizzes.id))
+    .where(eq(userQuizHistory.user, userId));
+
+  return {
+    history: res.map((record) => ({
+      quizSource: record.quizzes.source,
+      createdAt: record.user_quiz_history!.createdAt!.toISOString(),
+    })),
+    totalPages: Math.ceil(_count[0].count / limit),
+  };
 };
