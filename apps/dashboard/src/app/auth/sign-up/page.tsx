@@ -9,7 +9,7 @@ export default function SignUpPage() {
     <LoginTemplate
       onLogin={() =>
         signIn('google', {
-          callbackUrl: `/dashboard/?${loginFromExtensionSearchParam}=true`,
+          callbackUrl: `/dashboard/profile?${loginFromExtensionSearchParam}=true`,
         })
       }
       type={LoginType.SIGN_UP}

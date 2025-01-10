@@ -5,6 +5,8 @@ import {
   SocialProviderLoginButton,
 } from '../../atoms/social-provider-login-button';
 import Link from 'next/link';
+import Image from 'next/image';
+import Logo from '../../../assets/icons/icon.png';
 
 export enum LoginType {
   SIGN_IN = 'sign-in',
@@ -35,7 +37,10 @@ const titlesMap: Record<
 export const LoginTemplate: FC<Props> = ({ onLogin, type }) => {
   return (
     <div className={'pt-12'}>
-      <Card className={'max-w-[500px] mx-auto'}>
+      <div>
+        <Image src={Logo} alt={'logo'} className={'mx-auto w-24'} />
+      </div>
+      <Card className={'max-w-[500px] mx-auto mt-10'}>
         <CardHeader>
           <div className={'flex justify-between items-center'}>
             <CardTitle>{titlesMap[type].title}</CardTitle>

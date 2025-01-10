@@ -15,7 +15,7 @@ export default function LoginPage({
     <LoginTemplate
       onLogin={() =>
         signIn('google', {
-          callbackUrl: `/dashboard?${urlSearchParams.toString()}`,
+          callbackUrl: `/dashboard/profile?${urlSearchParams.toString()}`,
         })
       }
       type={LoginType.SIGN_IN}
