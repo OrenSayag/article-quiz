@@ -60,6 +60,16 @@ jobs:
         env:
           REGISTRY: ghcr.io/orensayag/article-quiz
           DB_HOST: db
+          DB_NAME: $DB_NAME
+          DB_USER: $DB_USER
+          DB_PASSWORD: $DB_PASSWORD
+          UNSTRUCTURED_API_URL: $UNSTRUCTURED_API_URL
+          CLAUDE_API_KEY: $CLAUDE_API_KEY
+          AUTH_SECRET: $AUTH_SECRET
+          GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID
+          GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET
+          NEXT_PUBLIC_CHROME_EXTENSION_ID: $NEXT_PUBLIC_CHROME_EXTENSION_ID
+          API_BASE_URL: article-quiz
 
         run: |
           pnpm nx run-many --target=docker --push
