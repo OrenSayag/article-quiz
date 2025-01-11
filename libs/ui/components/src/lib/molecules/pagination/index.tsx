@@ -46,7 +46,9 @@ export const Pagination: FC<Props> = ({
           {items.map((it, index) => (
             <>
               <PaginationItem
-                key={it.type === 'page' ? it.href : index + 'ellipsis'}
+                key={
+                  it.type === 'page' ? it.href ?? it.page : index + 'ellipsis'
+                }
               >
                 {it.type === 'page' && (
                   <PaginationLink href={it.href} isActive={it.isActive}>

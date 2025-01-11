@@ -111,12 +111,14 @@ function useTable({
       ...JSON.parse(JSON.stringify(query)),
       page,
     }).toString()}`;
-  const isFirstPage = currentPage > 1;
+  const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages;
   const paginationProps = useMemo<ComponentPropsWithoutRef<typeof Pagination>>(
     () => ({
       nextHref: !isLastPage ? getPageHref(Number(currentPage) + 1) : undefined,
-      prevHref: isFirstPage ? getPageHref(Number(currentPage) - 1) : undefined,
+      previousHref: !isFirstPage
+        ? getPageHref(Number(currentPage) - 1)
+        : undefined,
       items: [
         {
           page: Number(currentPage) - 1,
