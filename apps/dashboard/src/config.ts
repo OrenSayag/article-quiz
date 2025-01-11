@@ -17,7 +17,7 @@ const config: Config = {
 const validation = configSchema.safeParse(config);
 
 if (!validation.success) {
-  throw new Error(
+  console.warn(
     `Invalid env vars. Issues: ${JSON.stringify(validation.error.issues)}`
   );
 }
