@@ -1,4 +1,5 @@
 import { drizzle } from 'drizzle-orm/mysql2';
+import 'mysql2';
 
 export const db = drizzle({
   connection: {
