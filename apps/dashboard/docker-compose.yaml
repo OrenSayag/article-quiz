@@ -4,7 +4,7 @@ services:
     image: $REGISTRY/$NX_TASK_TARGET_PROJECT:$SHA
     environment:
       - NODE_ENV=production
-      - PORT=3001
+      - PORT=4000
       - DB_NAME=$DB_NAME
       - DB_USER=$DB_USER
       - DB_HOST=$DB_HOST
