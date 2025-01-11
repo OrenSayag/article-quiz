@@ -14,4 +14,5 @@ runs:
 
           echo "SHA=${SHA}"
           echo "BRANCH=${BRANCH}"
+          echo "NX_NO_CLOUD=true"
         ) >> $GITHUB_ENV
