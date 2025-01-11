@@ -20,8 +20,6 @@ services:
     environment:
       - MYSQL_DATABASE=$DB_NAME
       - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-    expose:
-      - 3306
     volumes:
       - aq-db-vol:/var/lib/mysql
     networks:
