@@ -9,7 +9,6 @@ services:
       - DB_USER=$DB_USER
       - DB_HOST=$DB_HOST
       - DB_PASSWORD=$DB_PASSWORD
-      - UNSTRUCTURED_API_URL=$UNSTRUCTURED_API_URL
       - CLAUDE_API_KEY=$CLAUDE_API_KEY
     networks:
       - aq-network
@@ -22,13 +21,6 @@ services:
       - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
     volumes:
       - aq-db-vol:/var/lib/mysql
-    networks:
-      - aq-network
-
-  unstructured:
-    container_name: aq-unstructured
-    image:  downloads.unstructured.io/unstructured-io/unstructured-api:latest
-    restart: always
     networks:
       - aq-network
 
