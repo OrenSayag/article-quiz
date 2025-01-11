@@ -1,3 +1,4 @@
+/// <reference types="chrome"/>
 'use client';
 
 export const notifyExtensionLoggedIn = async () => {
@@ -7,7 +8,7 @@ export const notifyExtensionLoggedIn = async () => {
     console.error('No chrome extension id in env');
   }
 
-  if (chrome && chrome.runtime) {
+  if (typeof chrome !== 'undefined' && chrome && chrome.runtime) {
     const res = await chrome.runtime.sendMessage(extId, {
       messageType: 'LOGGED_IN',
     });

@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     });
   }
   const userInfo = await getUserInfo({
-    userId: session.user!.id,
+    userId: (session.user! as any).id,
   });
   return Response.json(userInfo, {
     headers: corsHeaders,

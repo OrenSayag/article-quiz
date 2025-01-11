@@ -17,7 +17,7 @@ export async function PUT(request: Request) {
   }
   const reqBody = await request.json();
   const beRes = await updateUserEnabledSites({
-    userId: session.user.id,
+    userId: (session.user as any).id,
     ...reqBody,
   });
   return Response.json(beRes, {

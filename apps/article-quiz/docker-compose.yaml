@@ -1,0 +1,34 @@
+services:
+  article-quiz:
+    container_name: aq-article-quiz
+    image: $REGISTRY/$NX_TASK_TARGET_PROJECT:$SHA
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_NAME=$DB_NAME
+      - DB_USER=$DB_USER
+      - DB_HOST=$DB_HOST
+      - DB_PASSWORD=$DB_PASSWORD
+      - UNSTRUCTURED_API_URL=$UNSTRUCTURED_API_URL
+      - CLAUDE_API_KEY=$CLAUDE_API_KEY
+  db:
+    image: mysql
+    restart: always
+    container_name: aq-db
+    environment:
+      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+    expose:
+      - 3306
+    volumes:
+      - aq-db-vol:/var/lib/mysql
+
+  unstructured:
+    container_name: aq-unstructured
+    image:  downloads.unstructured.io/unstructured-io/unstructured-api:latest
+    restart: always
+    ports:
+      - '8000:8000'
+
+volumes:
+  aq-db-vol:

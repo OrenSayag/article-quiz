@@ -3,5 +3,5 @@ import { auth } from '../../../auth';
 
 export default async function ProfilePage() {
   const session = await auth();
-  return <ProfileTemplate session={session} />;
+  return <ProfileTemplate session={session!} />;
 }

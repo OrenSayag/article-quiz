@@ -3,12 +3,11 @@ import type {
   NextApiRequest,
   NextApiResponse,
 } from 'next';
-import type { NextAuthOptions } from 'next-auth';
-import { getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import env from './config';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import { accounts, db, sessions, users } from '@article-quiz/db';
+import { getServerSession, NextAuthOptions } from 'next-auth';
 
 export const authConfig = {
   adapter: DrizzleAdapter(db, {
@@ -26,7 +25,7 @@ export const authConfig = {
   callbacks: {
     session: async ({ session, token, user }) => {
       if (session?.user) {
-        session.user.id = user.id;
+        (session.user as any).id = user.id;
       }
       return session;
     },

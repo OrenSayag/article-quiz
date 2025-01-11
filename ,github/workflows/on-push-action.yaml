@@ -1,0 +1,77 @@
+name: Build Article Quiz Apps
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: aq-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Variable setup
+        uses: ./.github/actions/variables-setup
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21.2.0
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        env:
+          REGISTRY: ghcr.io/orensayag/article-quiz
+          DB_HOST: db
+
+        run: |
+          pnpm nx run-many --target=docker --push
+          pnpm nx run-many --target=compose
+
+      - name: merge docker-compose
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq eval-all '. as $item ireduce ({}; . * $item )' dist/docker-compose/*.yaml > dist/docker-compose.yaml
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-compose
+          path: dist/docker-compose.yaml

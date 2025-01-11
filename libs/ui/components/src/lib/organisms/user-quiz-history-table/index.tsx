@@ -144,7 +144,7 @@ function useTable({
           return false;
         }
         return true;
-      }),
+      }) as ComponentPropsWithoutRef<typeof Pagination>['items'],
     }),
     [totalPages, history]
   );

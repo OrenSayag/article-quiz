@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     });
   }
   const history = await getUserQuizHistory({
-    userId: session.user!.id,
+    userId: (session.user! as any).id,
     page: 1,
   });
   return Response.json(history, {

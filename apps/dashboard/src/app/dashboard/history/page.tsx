@@ -16,7 +16,7 @@ export default async function HistoryPage({
     redirect('/dashboard/history?page=1');
   }
   const { history, totalPages } = await getUserQuizHistory({
-    userId: session.user.id,
+    userId: (session!.user as any).id,
     page: Number(page),
   });
   return (

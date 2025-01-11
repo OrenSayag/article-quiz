@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
   const rb = await getQuiz({
-    userId: session.user!.id,
+    userId: (session.user! as any).id,
     type: searchParams.get('type') as InputContent['contentType'],
     source: searchParams.get('source')!,
   });

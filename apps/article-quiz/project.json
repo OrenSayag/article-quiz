@@ -23,6 +23,24 @@
           "buildTarget": "article-quiz:build:production"
         }
       }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "docker buildx build --build-arg NX_TASK_TARGET_PROJECT -t $REGISTRY/$NX_TASK_TARGET_PROJECT:$SHA -f apps/$NX_TASK_TARGET_PROJECT/Dockerfile ."
+      }
+    },
+    "compose": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p dist/docker-compose",
+          "cat apps/$NX_TASK_TARGET_PROJECT/docker-compose.yaml | envsubst > dist/docker-compose/$NX_TASK_TARGET_PROJECT.yaml",
+          "cat dist/docker-compose/$NX_TASK_TARGET_PROJECT.yaml"
+        ],
+        "parallel": false
+      }
     }
   }
 }
