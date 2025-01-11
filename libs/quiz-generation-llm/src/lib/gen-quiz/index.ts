@@ -6,7 +6,7 @@ import runpodSdk from 'runpod-sdk';
 import {
   QuizGenerator as QuizGeneratorService,
   quizGenerator,
-} from '@orensayag/article-quiz-quiz-generator';
+} from '@article-quiz/quiz-generator';
 
 export enum LlmHost {
   OLLAMA_LOCAL = 'ollama-local',

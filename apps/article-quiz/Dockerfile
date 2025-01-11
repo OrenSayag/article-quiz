@@ -4,8 +4,6 @@ ARG NX_TASK_TARGET_PROJECT
 
 WORKDIR /app
 
-RUN apk add --no-cache chromium
-
 COPY ./dist/apps/$NX_TASK_TARGET_PROJECT/package.json .
 
 RUN yarn --production

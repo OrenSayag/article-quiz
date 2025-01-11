@@ -7,8 +7,7 @@ import {
   LlmConfig,
 } from '@article-quiz/quiz-generation-llm';
 import { mdGenOpts } from '@article-quiz/utils';
-import { mdToPdf } from 'md-to-pdf';
-import { htmlToMd, urlToMd } from '@article-quiz/jina-ai';
+import { urlToMd } from '@article-quiz/jina-ai';
 
 type Input = {
   id: number;
@@ -20,7 +19,10 @@ type Input = {
 };
 
 export const handleJob = async ({ data, id, modelUsed, llmConfig }: Input) => {
-  const quizSource = data.contentType === 'url' ? data.url : data.content;
+  if (data.contentType !== 'url') {
+    throw new Error('Non-URL content types not supported');
+  }
+  const quizSource = data.url;
   log.debug(`Handling job for source ${quizSource}`);
   try {
     await updateJob({
@@ -28,18 +30,18 @@ export const handleJob = async ({ data, id, modelUsed, llmConfig }: Input) => {
       status: JobStatus.STARTED,
     });
     log.debug(`Getting MD pdf from buffer`);
-    const pdf = await mdToPdf({
-      content:
-        data.contentType === 'url'
-          ? await urlToMd({
-              url: data.url,
-              ...mdGenOpts,
-            })
-          : await htmlToMd({
-              html: data.content,
-              ...mdGenOpts,
-            }),
-    });
+    // const pdf = await mdToPdf({
+    //   content:
+    //     data.contentType === 'url'
+    //       ? await urlToMd({
+    //           url: data.url,
+    //           ...mdGenOpts,
+    //         })
+    //       : await htmlToMd({
+    //           html: data.content,
+    //           ...mdGenOpts,
+    //         }),
+    // });
     log.debug(`Generating quiz`);
     const startTime = Date.now();
     const quiz = await genQuiz({
@@ -49,16 +51,13 @@ export const handleJob = async ({ data, id, modelUsed, llmConfig }: Input) => {
         unstructuredApiKey: '',
         unstructuredApiUrl: '',
       },
-      buffer:
-        data.contentType === 'url'
-          ? Buffer.from(
-              await urlToMd({
-                url: data.url,
-                ...mdGenOpts,
-              }),
-              'utf-8'
-            )
-          : pdf.content,
+      buffer: Buffer.from(
+        await urlToMd({
+          url: data.url,
+          ...mdGenOpts,
+        }),
+        'utf-8'
+      ),
     });
     const endTime = Date.now();
     log.debug(`Saving quiz to db`);
