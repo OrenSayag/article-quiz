@@ -14,24 +14,5 @@ services:
       - GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
       - NEXT_PUBLIC_CHROME_EXTENSION_ID=$NEXT_PUBLIC_CHROME_EXTENSION_ID
       - API_BASE_URL=$API_BASE_URL
-  db:
-    image: mysql
-    restart: always
-    container_name: aq-db
-    environment:
-      - MYSQL_DATABASE=$DB_NAME
-      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
-    expose:
-      - 3306
-    volumes:
-      - aq-db-vol:/var/lib/mysql
-
-  unstructured:
-    container_name: aq-unstructured
-    image:  downloads.unstructured.io/unstructured-io/unstructured-api:latest
-    restart: always
-    ports:
-      - '8000:8000'
-
-volumes:
-  aq-db-vol:
+    networks:
+      - aq-network
