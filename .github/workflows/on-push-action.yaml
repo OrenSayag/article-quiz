@@ -69,7 +69,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET
           NEXT_PUBLIC_CHROME_EXTENSION_ID: $NEXT_PUBLIC_CHROME_EXTENSION_ID
           NEXTAUTH_URL: $NEXTAUTH_URL
-          API_BASE_URL: article-quiz
+          API_BASE_URL: http://article-quiz:3001/api/
 
         run: |
           pnpm nx run-many --target=docker --push
