@@ -1,5 +1,4 @@
 import { getUserQuizHistory as _getUserQuizHistory } from '@article-quiz/db';
-import { UserQuizHistoryLog } from '@article-quiz/shared-types';
 
 export const getUserQuizHistory = async (
   input: Parameters<typeof _getUserQuizHistory>[0]
@@ -14,8 +13,7 @@ export const getUserQuizHistory = async (
     }
     item.faviconUrl = faviconUrls[origin];
   }
-  const filteredHistory = filterOutConsecutiveSameSource(history);
-  return { history: filteredHistory, totalPages };
+  return { history, totalPages };
 };
 
 function getOrigin(url: string) {
@@ -25,11 +23,4 @@ function getOrigin(url: string) {
 
 function getFaviconUrl(origin: string) {
   return `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${origin}&size=16`;
-}
-
-function filterOutConsecutiveSameSource(arr: UserQuizHistoryLog[]) {
-  return arr.filter(
-    (item, index, self) =>
-      index === 0 || item.quizSource !== self[index - 1].quizSource
-  );
 }

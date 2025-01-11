@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createQuizJob as _createQuizJob } from './methods/create-quiz-job';
 import { getQuiz as _getQuiz } from './methods/get-quiz';
 import { ConfigService } from '@nestjs/config';
-import { logUserQuizHistory } from '@article-quiz/db';
+import { getLatestUserQuiz, logUserQuizHistory } from '@article-quiz/db';
 
 @Injectable()
 export class QuizService {
@@ -24,10 +24,18 @@ export class QuizService {
     >
   ) {
     const quiz = await _getQuiz({ ...input, claudeApiKey: this.claudeApiKey });
-    await logUserQuizHistory({
+    const latestQuiz = await getLatestUserQuiz({
       userId: input.userId,
-      quizId: quiz.id,
     });
+    if (
+      input.inputContent.contentType === 'url' &&
+      latestQuiz?.quizSource !== input.inputContent.url
+    ) {
+      await logUserQuizHistory({
+        userId: input.userId,
+        quizId: quiz.id,
+      });
+    }
     return { ...quiz, id: undefined };
   }
 }

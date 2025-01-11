@@ -18,7 +18,7 @@ export const getUserQuizHistory = async ({
   const res = await db
     .select()
     .from(userQuizHistory)
-    .rightJoin(quizzes, eq(userQuizHistory.quiz, quizzes.id))
+    .innerJoin(quizzes, eq(userQuizHistory.quiz, quizzes.id))
     .where(eq(userQuizHistory.user, userId))
     .offset(offset)
     .limit(limit)
@@ -28,9 +28,8 @@ export const getUserQuizHistory = async ({
       count: count(),
     })
     .from(userQuizHistory)
-    .rightJoin(quizzes, eq(userQuizHistory.quiz, quizzes.id))
+    .innerJoin(quizzes, eq(userQuizHistory.quiz, quizzes.id))
     .where(eq(userQuizHistory.user, userId));
-
   return {
     history: res.map((record) => ({
       quizSource: record.quizzes.source,
