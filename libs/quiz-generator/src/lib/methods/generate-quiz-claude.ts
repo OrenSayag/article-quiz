@@ -22,7 +22,7 @@ export const generateQuizClaude = async (input: Input): Promise<Output> => {
   });
 
   const message = await client.messages.create({
-    max_tokens: 1024,
+    max_tokens: 4096,
     messages: [
       {
         role: 'user',

@@ -12,10 +12,6 @@ type Output = UserInfo;
 export const getUser = async ({ id }: Input): Promise<Output> => {
   const res = await db.select().from(users).where(eq(users.id, id));
   const [user] = res;
-  console.log('GETTING USER');
-  console.log({
-    id,
-  });
   if (!user) {
     throw new UnauthorizedException();
   }

@@ -38,7 +38,8 @@ export const genPrompt = (input: Input): Output => {
       }
       \`\`\`
 
-      You will provide 1-10 questions based on the article's length.
+      You will provide 6 to 10 questions based on the article's length. I prefer maximum amount of questions - only reduce from 10 if you the content is very short.
+      Please make the questions HARD! I want the quiz to challenge the users.
 
       Each question, will have 4 answer choices, and the position of the correct answer in the array, is random.
       In each question object, include the sourceQuote field which should quote text from the markdown, which relates to the question / correct answer.
